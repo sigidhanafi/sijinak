@@ -102,6 +102,16 @@
       </ul>
     </li>
 
+    <!-- History Log -->
+    <li class="menu-item">
+      <a
+        href="/activity"
+        class="menu-link">
+        <i class="menu-icon tf-icons bx bx-history"></i>
+        <div data-i18n="Activity Log"></div>
+      </a>
+    </li>
+
     <!-- Misc -->
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text" data-i18n="Misc">Misc</span>

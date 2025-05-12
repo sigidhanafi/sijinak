@@ -4,4 +4,5 @@
 
 @section('content')
     <h1>Activity Log</h1>
+    <h6>Muhammad Ilham Rajo Sikumbang</h6>
 @endsection

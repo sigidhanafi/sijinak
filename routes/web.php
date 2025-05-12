@@ -7,4 +7,4 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::resource('/natha', ActivityController::class);
+Route::resource('/activity', ActivityController::class);
