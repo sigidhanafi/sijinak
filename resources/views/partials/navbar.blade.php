@@ -8,14 +8,14 @@
 
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
       <!-- Search -->
-      <div class="navbar-nav align-items-center">
+      {{-- <div class="navbar-nav align-items-center">
         <div class="nav-item navbar-search-wrapper mb-0">
           <a class="nav-item nav-link search-toggler px-0" href="javascript:void(0);">
             <i class="bx bx-search-alt bx-sm"></i>
             <span class="d-none d-md-inline-block">Search (Ctrl+/)</span>
           </a>
         </div>
-      </div>
+      </div> --}}
       <!-- /Search -->
 
       <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -60,7 +60,7 @@
             <li class="dropdown-menu-header border-bottom">
               <div class="dropdown-header d-flex align-items-center py-3">
                 <h5 class="text-body mb-0 me-auto">Notification</h5>
-                <a
+          <a
                   href="javascript:void(0)"
                   class="dropdown-notifications-all text-body"
                   data-bs-toggle="tooltip"

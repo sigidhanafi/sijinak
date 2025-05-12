@@ -1,0 +1,14 @@
+{
+    "parser": "php",
+    "plugins": [
+        "@prettier/plugin-php"
+    ],
+    "overrides": [
+        {
+            "files": "*.blade.php",
+            "options": {
+                "parser": "html"
+            }
+        }
+    ]
+}
