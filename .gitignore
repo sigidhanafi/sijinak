@@ -52,5 +52,5 @@ Thumbs.db
 
 # Composer & NPM lock files (opsional untuk ignore, tapi biasanya disimpan)
 # composer.lock
-# package-lock.json
+package-lock.json
 # yarn.lock
