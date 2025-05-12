@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## Docker Setup
+## 🫙 Docker Setup
 
 Make sure you have [Docker](https://docker.com) installed on your system.
 
@@ -17,13 +17,13 @@ cd laradock
 cp .env.example .env
 ```
 
-Open your PHP project's .env file or whichever configuration file you are reading from, and set the database host DB_HOST to mysql:
+Open your PHP project's `.env` file or whichever configuration file you are reading from, and set the database host DB_HOST to mysql:
 
 ```
 DB_HOST=mysql
 ```
 
-You need to use the Laradock's default DB credentials which can be found in the .env file (ex: MYSQL_USER=). Or you can change them and rebuild the container. See [Laradock's Documentation](https://laradock.io/docs/getting-started/#Usage) for more information.
+You need to use the Laradock's default DB credentials which can be found in the `.env` file (ex: MYSQL_USER=). Or you can change them and rebuild the container. See [Laradock's Documentation](https://laradock.io/docs/getting-started/#Usage) for more information.
 
 ```
 docker-compose up -d nginx mysql
