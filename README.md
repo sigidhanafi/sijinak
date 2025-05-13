@@ -27,6 +27,7 @@ To get started, you need [Docker](https://docker.com) on your computer. Next, yo
 DB_CONNECTION=mysql
 DB_HOST=sijinak-db
 DB_PORT=3306
+DB_DATABASE=your-database-name # or leave it as is
 ```
 
 ### 🚗 Starting the Services 
