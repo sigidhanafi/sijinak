@@ -1,0 +1,42 @@
+networks:
+  application:
+    driver: bridge
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sijinak-app
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    networks:
+      - application
+    # entrypoint: ["/bin/sh", "-c"]
+    # command:
+    #   - |
+    #     php artisan migrate
+    #     php artisan serve --host=0.0.0.0 --port=8000
+
+  db:
+    image: postgres:15
+    container_name: sijinak-db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    networks:
+      - application
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
