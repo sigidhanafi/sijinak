@@ -7,9 +7,11 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## 🫙 Docker Setup
+## Docker Setup
 
-Make sure you have [Docker](https://docker.com) installed on your system.
+To get started, you need [Docker](https://docker.com) on your computer.
+
+First, get the Laradock files:
 
 ```
 git clone --recurse-submodules https://github.com/Laradock/laradock.git
@@ -17,30 +19,39 @@ cd laradock
 cp .env.example .env
 ```
 
-Open your PHP project's `.env` file or whichever configuration file you are reading from, and set the database host DB_HOST to mysql:
+Next, you need to tell your PHP project how to connect to the database.
+Open your project's `.env` file (or the file where you keep your database settings).
+Change the `DB_HOST` setting to `mysql`:
 
 ```
 DB_HOST=mysql
 ```
 
-You need to use the Laradock's default DB credentials which can be found in the `.env` file (ex: MYSQL_USER=). Or you can change them and rebuild the container. See [Laradock's Documentation](https://laradock.io/docs/getting-started/#Usage) for more information.
+You can use the default database username and password that Laradock provides. You can find these in Laradock's `.env` file (look for `MYSQL_USER=`, for example).
+If you want to use different credentials, you can change them in Laradock's `.env` file and then rebuild the Docker container.
+For more details, check out [Laradock's Documentation](https://laradock.io/docs/getting-started/#Usage).
+
+Now, start the Docker containers for Nginx (the web server) and MySQL (the database), and make sure you are in the `/laradock` directory:
 
 ```
 docker-compose up -d nginx mysql
 ```
 
-First time building the image will take a few minutes, but subsequent builds will be cached. Now migrate the database with:
+The first time you run this, it will take a few minutes to build everything. After that, it will be much faster.
+
+Once the containers are running, you need to set up your database tables. Run this command:
 
 ```
-docker-compose exec workspace bash
-php artisan migrate
+docker-compose exec workspace php artisan migrate
 ```
 
-Your website will be hosted on:
+You only need to run the `php artisan migrate` command the first time you set up your project. Afterwards, to start your project, you'll just need to run the `docker-compose up -d nginx mysql` command mentioned earlier.
+
+Your laravel project should now be running at:
 
 [http://localhost](http://localhost)
 
-To stop running the containers, use
+When you're done working and want to stop the Docker containers, use this command:
 
 ```
 docker-compose down
