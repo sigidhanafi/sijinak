@@ -48,7 +48,7 @@ Once the containers are running, you need to set up your database tables and set
 
 ```
 docker compose exec app php artisan migrate
-docker-compose exec app php artisan key:generate
+docker compose exec app php artisan key:generate
 ```
 
 You only need to run the `php artisan migrate` and `php aritsan key:generate` commands the first time you set up your project. Afterwards, to start your project, you'll just need to run the `docker compose up -d --build` command mentioned earlier.
