@@ -28,6 +28,8 @@ DB_CONNECTION=mysql
 DB_HOST=sijinak-db
 DB_PORT=3306
 DB_DATABASE=your-database-name # or leave it as is
+DB_USERNAME=your-username
+DB_PASSWORD=${DB_USERNAME} # has to be the same as your username (so do not change this)
 ```
 
 ### 🚗 Starting the Services 
