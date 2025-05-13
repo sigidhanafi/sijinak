@@ -17,19 +17,16 @@ cp .env.example .env
 
 ## 🫙 Docker Usage
 
-> This Dockerfile has been set to use PostgreSQL only. Using SQLite3, MYSQL, or any other database will NOT work.
+> This Dockerfile has been set to use MySQL only. 
 
 ### 🚶‍♀️‍➡ Getting Started
 
 To get started, you need [Docker](https://docker.com) on your computer. Next, you need to tell your PHP project how to connect to the database. Open your project's `.env` file (or the file where you keep your database settings).
 
 ```env
-DB_CONNECTION=pgsql
+DB_CONNECTION=mysql
 DB_HOST=sijinak-db
-DB_PORT=5432
-DB_DATABASE= # Your database name
-DB_USERNAME= # Your database username
-DB_PASSWORD= # Your database password (cannot be empty)
+DB_PORT=3306
 ```
 
 ### 🚗 Starting the Services 
@@ -47,17 +44,19 @@ The first time you run this, it will take a few minutes to build and download ev
 Once the containers are running, you need to set up your database tables and set your project's unique key. Run this command:
 
 ```
+docker compose exec app php artisan config:clear 
 docker compose exec app php artisan migrate
 docker compose exec app php artisan key:generate
 ```
 
-You only need to run the `php artisan migrate` and `php aritsan key:generate` commands the first time you set up your project. Afterwards, to start your project, you'll just need to run the `docker compose up -d --build` command mentioned earlier.
+You only need to run the 3 commands above the first time you set up your project. Afterwards, to start your project, you'll just need to run the `docker compose up -d --build` command mentioned earlier.
 
 ### ✈️ Opening your Project
 
-Your laravel project should now be running at:
+Your should now have 2 services running:
 
-[http://localhost:8000](http://localhost:8000)
+* Laravel App: [http://localhost:8000](http://localhost:8000)
+* phpmyadmin: [http://localhost:8080](http://localhost:8080)
 
 When you're done working and want to stop the Docker containers, use this command:
 
