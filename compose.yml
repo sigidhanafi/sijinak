@@ -8,10 +8,17 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: sijinak-app
+    env_file:
+      - ./.env
     ports:
       - 8000:8000
     volumes:
       - .:/app
+      - /app/vendor
+      - /app/node_modules
+      - /app/storage/framework/sessions
+      - /app/storage/framework/views
+      - /app/storage/framework/cache
     depends_on:
       - db
     networks:
@@ -36,7 +43,7 @@ services:
     networks:
       - application
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
