@@ -11,6 +11,8 @@ class Classes extends Model
     /** @use HasFactory<\Database\Factories\ClassesFactory> */
     use HasFactory;
 
+    protected $fillable = ['className', 'teacherId'];
+
     public function students(): HasMany
     {
         return $this->hasMany(Students::class, 'classId');

@@ -1,5 +1,28 @@
 @extends('layouts.app') @section('title', 'Class Page | Sijinak')
 @section('content')
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form
+            class="d-flex my-2 my-lg-0"
+            method="GET"
+            action="{{ route('classes.index') }}"
+        >
+            <input
+                class="form-control me-sm-2"
+                type="text"
+                name="search"
+                placeholder="Cari Kelas"
+                value="{{ request('search') }}"
+            />
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">
+                Search
+            </button>
+        </form>
+    </div>
+</div>
+<a href="{{ route('classes.create') }}" class="btn btn-primary me-2 mb-3"
+    >Tambah Kelas</a
+>
 <div class="table-responsive">
     <table class="table">
         <thead>
@@ -33,9 +56,16 @@
                             <a class="dropdown-item" href="javascript:void(0);"
                                 ><i class="bx bx-edit-alt me-1"></i>Edit</a
                             >
-                            <a class="dropdown-item" href="javascript:void(0);"
-                                ><i class="bx bx-trash me-1"></i>Delete</a
+                            <form
+                                action="{{ route('classes.destroy', $class->id) }}"
+                                method="POST"
+                                onsubmit="return confirm('Yakin ingin menghapus kelas ini?');"
                             >
+                                @csrf @method('DELETE')
+                                <button class="dropdown-item" type="submit">
+                                    <i class="bx bx-trash me-1"></i>Hapus
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </td>

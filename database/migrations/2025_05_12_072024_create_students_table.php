@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('nisn');
-            $table->foreignId('classId')->constrained(
+            $table->foreignId('classId')->nullable()->constrained(
                 table: 'classes',
                 indexName: 'classes_classId'
-            );
+            )->onDelete('set null');
             $table->timestamps();
         });
     }

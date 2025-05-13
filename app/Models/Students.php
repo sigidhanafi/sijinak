@@ -11,14 +11,16 @@ class Students extends Model
     /** @use HasFactory<\Database\Factories\StudentsFactory> */
     use HasFactory;
 
+    protected $fillable = ['name', 'nisn', 'classId'];
+
     public function classes(): BelongsTo
     {
         return $this->belongsTo(Classes::class, 'classId');
     }
 
-    public function scopeSearch($query, $search): void
-    {
-        $query->where('nisn', 'like', "%{$search}%")
-            ->orWhere('name', 'like', "%{$search}%");
-    }
+    // public function scopeSearch($query, $search): void
+    // {
+    //     $query->where('nisn', 'like', "%{$search}%")
+    //         ->orWhere('name', 'like', "%{$search}%");
+    // }
 }
