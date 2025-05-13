@@ -41,12 +41,17 @@ The first time you run this, it will take a few minutes to build and download ev
 
 ### 🥀 Final Steps
 
-Once the containers are running, you need to set up your database tables and set your project's unique key. Run this command:
+Once the containers are running, you need to set your project's unique key. Run this command:
 
 ```
 docker compose exec app php artisan config:clear 
-docker compose exec app php artisan migrate
 docker compose exec app php artisan key:generate
+```
+
+Then set up your database tables with:
+
+```
+docker compose exec app php artisan migrate
 ```
 
 You only need to run the 3 commands above the first time you set up your project. Afterwards, to start your project, you'll just need to run the `docker compose up -d --build` command mentioned earlier.
