@@ -36,12 +36,12 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - /data:/var/lib/mysql
+      - ./data:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=sijinak
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USERNAME=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
     networks:
       - application
     healthcheck:
