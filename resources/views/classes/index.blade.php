@@ -1,25 +1,27 @@
 @extends('layouts.app') @section('title', 'Class Page | Sijinak')
 @section('content')
+<h3>Daftar Kelas</h3>
 <div class="row mb-3">
     <div class="col-md-6">
         <form
-            class="d-flex my-2 my-lg-0"
+            class="d-flex flex-column flex-sm-row gap-2"
             method="GET"
             action="{{ route('classes.index') }}"
         >
             <input
-                class="form-control me-sm-2"
+                class="form-control"
                 type="text"
                 name="search"
                 placeholder="Cari Kelas"
                 value="{{ request('search') }}"
             />
-            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">
+            <button class="btn btn-outline-primary" type="submit">
                 Search
             </button>
         </form>
     </div>
 </div>
+
 <a href="{{ route('classes.create') }}" class="btn btn-primary me-2 mb-3"
     >Tambah Kelas</a
 >
@@ -36,13 +38,13 @@
         <tbody>
             @forelse ($classes as $class)
             <tr>
-                <td><span class="fw-medium">{{ $class->className }}</span></td>
-                <td>-</td>
                 <td>
-                    <a href="/classes/{{ $class->id }}"
-                        >{{ $class->totalStudents($class->id) }}</a
+                    <a href="/classes/{{ $class->id }}" class="fw-medium"
+                        >{{ $class->className }}</a
                     >
                 </td>
+                <td>-</td>
+                <td>{{ $class->totalStudents($class->id) }}</td>
                 <td>
                     <div class="dropdown">
                         <button
@@ -53,9 +55,12 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="javascript:void(0);"
-                                ><i class="bx bx-edit-alt me-1"></i>Edit</a
+                            <a
+                                class="dropdown-item"
+                                href="{{ route('classes.edit', $class->id) }}"
                             >
+                                <i class="bx bx-edit-alt me-1"></i>Edit
+                            </a>
                             <form
                                 action="{{ route('classes.destroy', $class->id) }}"
                                 method="POST"

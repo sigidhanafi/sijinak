@@ -1,5 +1,6 @@
 @extends('layouts.app') @section('title', 'Student Page | Sijinak')
 @section('content')
+<h3>Daftar Siswa</h3>
 <div class="row mb-3">
     <div class="col-md-6">
         <form
@@ -53,7 +54,7 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="javascript:void(0);"
+                            <a class="dropdown-item" href="{{ route('students.edit', $student->id) }}"
                                 ><i class="bx bx-edit-alt me-1"></i>Edit</a
                             >
                             <form

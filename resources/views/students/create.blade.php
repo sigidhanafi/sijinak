@@ -5,6 +5,7 @@
         >Kembali</a
     >
 </div>
+<h3>Tambah Siswa</h3>
 <form action="{{ route('students.store') }}" method="POST">
     @csrf
     <div class="row">
@@ -51,13 +52,16 @@
                     class="form-select"
                     required
                 >
-                    <option value="" disabled selected>Kelas</option>
+                    <option value="" disabled {{ old('classId', $student->classId ?? '') == '' ? 'selected' : '' }}>Kelas</option>
                     @foreach ($classes as $class)
-                    <option value="{{ $class->id }}"
-                        >{{ $class->className }}</option
-                    >
+                        <option value="{{ $class->id }}" {{ old('classId', $student->classId ?? '') == $class->id ? 'selected' : '' }}>
+                            {{ $class->className }}
+                        </option>
                     @endforeach
                 </select>
+                <div id="nameHelp" class="form-text">
+                    Pilih kelas siswa.
+                </div>
             </div>
         </div>
     </div>
@@ -68,7 +72,7 @@
     </div>
 </form>
 @if (session('success'))
-<div class="row mt-3">
+<div class="row">
     <div class="col-md-6">
         <div class="alert alert-success" role="alert">
             {{ session('success') }}
@@ -76,10 +80,10 @@
     </div>
 </div>
 @endif @if ($errors->any())
-<div class="row mt-3">
+<div class="row">
     <div class="col-md-6">
-        <div class="alert alert-danger" role="alert">
-            NISN sudah terdaftar!
+        <div class="alert alert-danger">
+            @foreach ($errors->all() as $error) {{ $error }} @endforeach
         </div>
     </div>
 </div>

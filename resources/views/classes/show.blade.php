@@ -5,7 +5,7 @@
 <div class="text-end mb-3">
     <a href="{{ route('classes.index') }}" class="btn btn-outline-primary">Kembali</a>
 </div>
-
+<h3>Daftar Siswa Kelas {{ $class->className }}</h3>
 <div class="row mb-3">
     <div class="col-md-6">
         <form class="d-flex my-2 my-lg-0" method="GET" action="{{ route('classes.show', $class->id) }}">
@@ -20,7 +20,9 @@
         </form>
     </div>
 </div>
-
+<a href="{{ route('students.create') }}" class="btn btn-primary me-2 mb-3"
+    >Tambah Siswa</a
+>
 <div class="table-responsive">
     <table class="table">
         <thead>

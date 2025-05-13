@@ -1,20 +1,21 @@
 @extends('layouts.app') @section('title', 'Student Page | Sijinak')
 @section('content')
+<h3>Daftar Siswa</h3>
 <div class="row mb-3">
     <div class="col-md-6">
         <form
-            class="d-flex my-2 my-lg-0"
+            class="d-flex flex-column flex-sm-row gap-2"
             method="GET"
             action="{{ route('students.index') }}"
         >
             <input
-                class="form-control me-sm-2"
+                class="form-control"
                 type="text"
                 name="search"
                 placeholder="Cari Siswa"
                 value="{{ request('search') }}"
             />
-            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">
+            <button class="btn btn-outline-primary" type="submit">
                 Search
             </button>
         </form>
@@ -53,7 +54,7 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="javascript:void(0);"
+                            <a class="dropdown-item" href="{{ route('students.edit', $student->id) }}"
                                 ><i class="bx bx-edit-alt me-1"></i>Edit</a
                             >
                             <form

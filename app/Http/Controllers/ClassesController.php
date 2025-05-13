@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Classes;
 use App\Models\Students;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ClassesController extends Controller
 {
@@ -75,17 +76,37 @@ class ClassesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Classes $classes)
+    public function edit(Classes $class)
     {
-        //
+        return view('classes.edit', compact('class'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Classes $classes)
+    public function update(Request $request, Classes $class)
     {
-        //
+        $validated = $request->validate([
+            'className' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('classes', 'className')->ignore($class->id),
+            ],
+            'teacherId' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('classes', 'teacherId')->ignore($class->id),
+            ],
+        ], [
+            'className.unique' => 'Nama kelas ini sudah terdaftar.',
+            'teacherId.unique' => 'NIP ini sudah terdaftar.',
+        ]);
+
+        $class->update($validated);
+
+        return redirect()->route('classes.edit', $class->id)->with('success', 'Kelas berhasil diperbarui.');
     }
 
     /**
