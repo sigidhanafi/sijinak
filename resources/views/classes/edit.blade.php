@@ -37,7 +37,7 @@
     <button type="submit" class="btn btn-primary mt-3 mb-3">
         Simpan Perubahan
     </button>
-    <a href="{{ route('students.index') }}" class="btn btn-secondary mt-3 mb-3"
+    <a href="{{ route('classes.index') }}" class="btn btn-secondary mt-3 mb-3"
         >Batal</a
     >
 </form>

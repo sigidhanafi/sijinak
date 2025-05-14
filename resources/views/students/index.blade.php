@@ -54,7 +54,9 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ route('students.edit', $student->id) }}"
+                            <a
+                                class="dropdown-item"
+                                href="{{ route('students.edit', $student->id) }}"
                                 ><i class="bx bx-edit-alt me-1"></i>Edit</a
                             >
                             <form
