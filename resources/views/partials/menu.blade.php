@@ -79,6 +79,26 @@
 
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div data-i18n="Aktivitas">Aktivitas</div>
+        <div class="badge bg-primary rounded-pill ms-auto">3</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item">
+          <a href={{ route('activities.generate') }} class="menu-link">
+            <div data-i18n="Generate QR">Generate QR</div>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="#" class="menu-link">
+            <div data-i18n="Scan QR">Scan QR</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <li class="menu-item">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-table"></i>
         <div data-i18n="Data Management">Data Management</div>
         <div class="badge bg-primary rounded-pill ms-auto">3</div>
