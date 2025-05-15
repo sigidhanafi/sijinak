@@ -105,10 +105,10 @@
     <!-- History Log -->
     <li class="menu-item">
       <a
-        href="/activity"
+        href="/activities"
         class="menu-link">
         <i class="menu-icon tf-icons bx bx-history"></i>
-        <div data-i18n="Activity Log"></div>
+        <div data-i18n="Activity Log">Activity Log</div>
       </a>
     </li>
 

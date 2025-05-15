@@ -1,40 +1,31 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use App\Http\Resources\ActivityResource;
+use App\Http\Resources\ActivityCollection;
 use Illuminate\Http\Request;
 
 class ActivityController extends Controller
 {
     /**
-     * This is a flag to determine if the user is an admin or not.
-     * In a real application, you would check the user's role or permissions.
-     * For this example, we will assume the user is an admin.
-     *
-     * @var bool
-     */
-    private $isAdmin = true;
-
-    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        if ($this->isAdmin) {
-            return view('activity-log.admin.index');
-        }
-
-        return view('activity-log.user.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
+        // return Activity::all();
+        // return Activity::paginate(10);
+        // return Activity::simplePaginate(10);
+        // return Activity::cursorPaginate(10);
+        // return Activity::latest()->paginate(10);
+        // return Activity::latest()->simplePaginate(10);
+        // return Activity::latest()->cursorPaginate(10);
         //
+        $length = $request->input('length', 10);
+        return new ActivityCollection(Activity::paginate($length));
     }
 
     /**
@@ -51,14 +42,7 @@ class ActivityController extends Controller
     public function show(Activity $activity)
     {
         //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Activity $activity)
-    {
-        //
+        return new ActivityResource($activity);
     }
 
     /**

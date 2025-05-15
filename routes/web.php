@@ -8,6 +8,12 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::resource('/activity', ActivityController::class);
+// Resource Routes
+Route::resource('/activities', ActivityController::class);
 
-Route::resource('/activity', ActivityController::class);
+// API Resource Routes
+Route::group(['prefix' => 'api'], function () {
+    Route::apiResources([
+        'activities' => Api\ActivityController::class,
+    ]);
+});

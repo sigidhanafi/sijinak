@@ -19,6 +19,7 @@ services:
       - /app/storage/framework/sessions
       - /app/storage/framework/views
       - /app/storage/framework/cache
+    restart: always
     depends_on:
       - db
     networks:
