@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Activities extends Model
 {
-    protected $fillable = ['activityName', 'qrcode', 'createdBy'];
+    protected $fillable = ['activityName', 'qrCode', 'createdBy'];
 
     public function users(): BelongsTo
     {
