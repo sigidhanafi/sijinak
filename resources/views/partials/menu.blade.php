@@ -89,6 +89,12 @@
             <div data-i18n="Izin Siswa">Izin Siswa</div>
           </a>
         </li>
+        <li class="menu-item">
+          <a href="{{ route('activities.status') }}" class="menu-link">
+            <div data-i18n="Status Izin">Status Izin</div>
+          </a>
+        </li>
+        
       </ul>
     </li>
 
