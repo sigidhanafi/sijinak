@@ -10,3 +10,5 @@ Route::get('/', function () {
 Route::get('/izin-siswa', [ActivitiesController::class, 'izinSiswa'])->name('activities.izin-siswa');
 
 Route::resource('activities', ActivitiesController::class);
+
+Route::post('/izin/store', [PermissionController::class, 'store'])->name('permission.store');
