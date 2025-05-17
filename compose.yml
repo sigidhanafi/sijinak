@@ -1,0 +1,73 @@
+networks:
+  application:
+    driver: bridge
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sijinak-app
+    env_file:
+      - ./.env
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+      - /app/vendor
+      - /app/node_modules
+      - /app/storage/framework/sessions
+      - /app/storage/framework/views
+      - /app/storage/framework/cache
+    depends_on:
+      - db
+    networks:
+      - application
+    # entrypoint: ["/bin/sh", "-c"]
+    # command:
+    #   - |
+    #     php artisan migrate
+    #     php artisan serve --host=0.0.0.0 --port=8000
+
+  db:
+    image: mysql:latest
+    container_name: sijinak-db
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+    networks:
+      - application
+    # healthcheck:
+    #   test:
+    #     [
+    #       "CMD",
+    #       "mysqladmin",
+    #       "ping",
+    #       "-h",
+    #       "localhost",
+    #       "-u${DB_USERNAME}",
+    #       "-p${DB_PASSWORD}",
+    #     ]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: sijinak-phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=${DB_USERNAME}
+      - PMA_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - application

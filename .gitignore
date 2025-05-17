@@ -30,6 +30,7 @@ yarn-error.log
 /storage/*.key
 .env
 .env.*.backup
+!.env.example
 Homestead.yaml
 Homestead.json
 .phpunit.result.cache
@@ -54,3 +55,6 @@ Thumbs.db
 # composer.lock
 # package-lock.json
 # yarn.lock
+
+# postgres
+/data
