@@ -14,30 +14,31 @@ class ActivitiesController extends Controller
     }
     public function status()
 {
-    $izinList = IzinSiswa::where('user_id', auth()->id())->latest()->get();
+    $izinList = IzinSiswa::where('user_id', 1)->latest()->get();
     return view('activities.status-izin', compact('izinList'));
 }
 
 public function store(Request $request)
 {
-    $request->validate([
-        'alasan' => 'required|string',
-        'dokumen' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+    $validated = $request->validate([
+        'alasan' => 'required|string|max:255',
+        'waktu_keluar' => 'required|date',
+        'dokumen' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
     ]);
 
-    $path = null;
-    if ($request->hasFile('dokumen')) {
-        $path = $request->file('dokumen')->store('dokumen_izin');
-    }
+    // Simpan file
+    $path = $request->file('dokumen')->store('dokumen_izin');
 
-    IzinSiswa::create([
-        'user_id' => auth()->id(),
-        'alasan' => $request->alasan,
+    // Simpan data ke DB
+    \App\Models\IzinSiswa::create([
+        'user_id' => 1, // atau auth()->id() jika login
+        'alasan' => $validated['alasan'],
+        'waktu_keluar' => $validated['waktu_keluar'],
         'dokumen' => $path,
         'status' => 'pending',
     ]);
 
-    return redirect()->route('activities.status')->with('success', 'Pengajuan izin berhasil dikirim.');
+    return redirect()->back()->with('success', 'Permohonan izin berhasil dikirim.');
 }
 
 
