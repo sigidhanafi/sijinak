@@ -27,6 +27,7 @@ yarn-error.log
 /vendor
 /node_modules
 /public/storage
+/public/*.php
 /storage/*.key
 .env
 .env.*.backup
@@ -46,6 +47,7 @@ Homestead.json
 /storage/framework/testing
 /storage/framework/views
 /storage/logs
+*laravel.log
 
 # System Files
 .DS_Store
