@@ -4,24 +4,29 @@
 
 @section('content')
 <div class="container mt-4">
-  <h4>Formulir Izin Siswa Keluar Sekolah</h4>
+  <h2>Formulir Izin Siswa Keluar Sekolah</h2>
 
   {{-- Notifikasi berhasil --}}
   @if(session('success'))
-    <div class="alert alert-success">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
       {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   @endif
 
-  {{-- Notifikasi gagal/validasi --}}
-  @if($errors->any())
-    <div class="alert alert-danger">
-      <strong>Terjadi kesalahan:</strong>
-      <ul>
-        @foreach($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
+  {{-- Notifikasi gagal --}}
+  @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ session('error') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+
+  {{-- Error validasi (1 baris saja) --}}
+  @if ($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ $errors->first() }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   @endif
 
@@ -39,7 +44,7 @@
     </div>
 
     <div class="mb-3">
-      <label for="dokumen" class="form-label">Dokumen Pendukung (PDF/JPG/PNG)</label>
+      <label for="dokumen" class="form-label">Dokumen Pendukung (PDF, JPG, atau PNG) (Max file: 2MB)</label>
       <input type="file" name="dokumen" class="form-control" id="dokumen" required>
     </div>
 

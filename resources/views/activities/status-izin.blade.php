@@ -8,6 +8,7 @@
 @if($izinList->isEmpty())
   <p>Belum ada pengajuan izin.</p>
 @else
+<p class="text-muted">Berikut adalah daftar permohonan izin yang telah kamu ajukan beserta statusnya.</p>
   <table class="table">
     <thead>
       <tr>

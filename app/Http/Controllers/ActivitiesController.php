@@ -24,23 +24,34 @@ public function store(Request $request)
         'alasan' => 'required|string|max:255',
         'waktu_keluar' => 'required|date',
         'dokumen' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+    ], [
+        'alasan.required' => 'Alasan wajib diisi.',
+        'alasan.max' => 'Alasan maksimal 255 karakter.',
+        'waktu_keluar.required' => 'Waktu keluar wajib diisi.',
+        'waktu_keluar.date' => 'Format waktu keluar tidak valid.',
+        'dokumen.required' => 'Dokumen wajib diunggah.',
+        'dokumen.file' => 'File yang diunggah tidak valid.',
+        'dokumen.mimes' => 'Format dokumen harus PDF, JPG, JPEG, atau PNG.',
+        'dokumen.max' => 'Ukuran dokumen tidak boleh lebih dari 2MB.',
     ]);
 
-    // Simpan file
-    $path = $request->file('dokumen')->store('dokumen_izin');
+    try {
+        // Simpan file
+        $path = $request->file('dokumen')->store('dokumen_izin', 'public');
 
-    // Simpan data ke DB
-    \App\Models\IzinSiswa::create([
-        'user_id' => 1, // atau auth()->id() jika login
-        'alasan' => $validated['alasan'],
-        'waktu_keluar' => $validated['waktu_keluar'],
-        'dokumen' => $path,
-        'status' => 'pending',
-    ]);
+        // Simpan data ke database
+        \App\Models\IzinSiswa::create([
+            'user_id' => 1, // ganti dengan auth()->id() jika login sudah aktif
+            'alasan' => $validated['alasan'],
+            'waktu_keluar' => $validated['waktu_keluar'],
+            'dokumen' => $path,
+            'status' => 'pending',
+        ]);
 
-    return redirect()->back()->with('success', 'Permohonan izin berhasil dikirim.');
+        return redirect()->back()->with('success', 'Permohonan izin berhasil dikirim.');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat mengirim permohonan.');
+    }
 }
-
-
 
 }
