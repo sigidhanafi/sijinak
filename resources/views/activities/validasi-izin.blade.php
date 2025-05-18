@@ -38,7 +38,7 @@
                         <td>{{ \Carbon\Carbon::parse($izin->waktu_keluar)->format('d-m-Y H:i') }}</td>
                         <td>
                             @if($izin->dokumen)
-                                <a href="{{ asset('storage/'.$izin->dokumen) }}" target="_blank">Lihat Dokumen</a>
+                            <a href="{{ asset('storage/' . $izin->dokumen) }}" target="_blank">Lihat Dokumen</a>
                             @else
                                 Tidak ada
                             @endif
