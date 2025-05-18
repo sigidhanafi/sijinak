@@ -143,13 +143,15 @@ class ParentsController extends Controller
         $parent->name = $validated['parent_name'];
         $parent->save();
 
-        foreach ($parent->students as $existingStudent) {
-            $existingStudent->parent()->dissociate();
-            $existingStudent->save();
-        }
+        if (!$parent->students->contains($student->id)) {
+            foreach ($parent->students as $existingStudent) {
+                $existingStudent->parent()->dissociate();
+                $existingStudent->save();
+            }
 
-        $student->parent()->associate($parent);
-        $student->save();
+            $student->parent()->associate($parent);
+            $student->save();
+        }
 
         return redirect()->back()
             ->with('edit_success', true)
