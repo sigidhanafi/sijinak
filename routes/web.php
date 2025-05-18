@@ -18,8 +18,6 @@ Route::post('/izin-siswa', [ActivitiesController::class, 'store'])->name('activi
 
 Route::get('/status-izin', [ActivitiesController::class, 'status'])->name('activities.status');
 
-Route::get('/validasi-izin', [PermissionController::class, 'index'])->name('activities.validasi-izin');
-
 Route::get('/validasi-izin', [IzinSiswaController::class, 'index'])->name('activities.validasi-izin');
 
 Route::post('/guru-piket/izin-siswa/{id}/approve', [IzinSiswaController::class, 'approve'])->name('permission.approve');
