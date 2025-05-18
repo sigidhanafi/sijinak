@@ -10,23 +10,23 @@ class IzinSiswaController extends Controller
 {
     public function index()
     {
-        $izinList = IzinSiswa::with('user')->where('status', 'pending')->latest()->get();
-        return view('activities.guru-piket-izin', compact('izinList'));
-    }
+        $izinList = IzinSiswa::with('user')->where('status', 'pending')->get();
+        return view('activities.validasi-izin', compact('izinList'));
+    }   
 
     public function approve($id)
     {
         $izin = IzinSiswa::findOrFail($id);
         $izin->status = 'approved';
 
-        // Generate QR code base64 dari data izin (bisa disesuaikan)
-        $qrData = "Izin ID: {$izin->id}\nSiswa: {$izin->user->name}\nWaktu Keluar: {$izin->waktu_keluar}";
-        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($qrData));
+        // qrCode nya blm jadi, modulenya g jalan ama username blm ada. 
+        $qrData = "Izin ID: {$izin->id}\nSiswa: tes\nWaktu Keluar: {$izin->waktu_keluar}";
 
-        $izin->qr_code = $qrCode;
+
+        $izin->qr_code = $qrData;
         $izin->save();
 
-        return redirect()->route('permission.index')->with('success', 'Izin berhasil disetujui dan QR code dibuat.');
+        return redirect()->route('activities.validasi-izin')->with('success', 'Izin berhasil disetujui dan QR code dibuat.');
     }
 
     public function reject($id)
@@ -35,6 +35,6 @@ class IzinSiswaController extends Controller
         $izin->status = 'rejected';
         $izin->save();
 
-        return redirect()->route('permission.index')->with('success', 'Izin berhasil ditolak.');
+        return redirect()->route('activities.validasi-izin')->with('success', 'Izin berhasil ditolak.');
     }
 }
