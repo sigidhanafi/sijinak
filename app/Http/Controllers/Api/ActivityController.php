@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Http\Resources\ActivityResource;
-use App\Http\Resources\ActivityCollection;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreActivityRequest;
 
 class ActivityController extends Controller
 {
@@ -25,15 +25,15 @@ class ActivityController extends Controller
         // return Activity::latest()->cursorPaginate(10);
         //
         $length = $request->input('length', 10);
-        return new ActivityCollection(Activity::paginate($length));
+        return ActivityResource::collection(Activity::paginate($length));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreActivityRequest $request)
     {
-        //
+        return new ActivityResource(Activity::create($request->all()));
     }
 
     /**

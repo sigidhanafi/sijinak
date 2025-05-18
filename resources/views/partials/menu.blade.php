@@ -105,7 +105,7 @@
     <!-- History Log -->
     <li class="menu-item">
       <a
-        href="/activities"
+        href="{{ URL::to('activities')  }}"
         class="menu-link">
         <i class="menu-icon tf-icons bx bx-history"></i>
         <div data-i18n="Activity Log">Activity Log</div>

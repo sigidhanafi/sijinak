@@ -18,8 +18,8 @@ class ActivityFactory extends Factory
     {
         return [
             //
-            'studentId' => fake()->unique()->numberBetween(1, 1000),
-            'activityId' => fake()->unique()->numberBetween(1, 1000),
+            'student_id' => fake()->unique()->numberBetween(1, 1000),
+            'activity_id' => fake()->unique()->numberBetween(1, 1000),
         ];
     }
 }

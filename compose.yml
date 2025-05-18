@@ -35,7 +35,7 @@ services:
     container_name: sijinak-db
     restart: always
     ports:
-      - 3306:3306
+      - 3307:3306
     volumes:
       - ./data:/var/lib/mysql
     environment:

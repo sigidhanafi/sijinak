@@ -31,6 +31,9 @@
     class="template-customizer-theme-css" />
   <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
 
+  {{-- Core JS --}}
+  <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
+
   <!-- Vendors CSS -->
   <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" />
@@ -99,7 +102,6 @@
 
   <!-- Core JS -->
   <!-- build:js assets/vendor/js/core.js -->
-  <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
   <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
   <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
   <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>

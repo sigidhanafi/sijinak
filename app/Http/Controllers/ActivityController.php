@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Action;
 
 class ActivityController extends Controller
 {
@@ -23,7 +25,12 @@ class ActivityController extends Controller
     {
         //
         if ($this->isAdmin) {
-            return view('activity-log.admin.index');
+            $activities = Activity::all();
+
+            return view(
+                'activity-log.admin.index',
+                compact('activities')
+            );
         }
 
         return view('activity-log.user.index');
@@ -42,7 +49,14 @@ class ActivityController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validate
+        // read more on validation at http://laravel.com/docs/validation
+        $validated = $request->validate([
+            'studentId' => 'required|integer',
+            'activityId' => 'required|integer',
+        ]);
+
+        return redirect('/activities');
     }
 
     /**

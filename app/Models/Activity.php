@@ -9,4 +9,9 @@ class Activity extends Model
 {
     /** @use HasFactory<\Database\Factories\ActivityFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'student_id',
+        'activity_id',
+    ];
 }

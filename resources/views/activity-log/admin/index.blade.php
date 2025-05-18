@@ -3,27 +3,29 @@
 @section('title', 'Admin Activity Log | Sijinak')
 
 @section('content')
+<style>
+    select,
+    select:active,
+    select:focus {
+        border: 1px solid gray !important;
+        margin-right: 8px !important;
+    }
+
+    input,
+    input:active,
+    input:focus {
+        border: 1px solid gray !important;
+        margin-left: 8px !important;
+    }
+</style>
+
 <main class="card">
     <header class="card-header">
         <h5 class="card-title mb-0">Activity Log</h5>
     </header>
 
-    <section class="card-datatable table-responsive">
-        <div class="mx-2 mb-4 row">
-            <div class="col-md-2">
-                <select onchange="getActivities(this.value)" name="activity_table_length" id="activity_table_length"
-                    class="form-select">
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
-            </div>
-            <div class="col-md-10">
-
-            </div>
-        </div>
-        <table id="myTable" class="table">
+    <section class="card-datatable table-responsive p-4 pt-0">
+        <table id="myTable" class="table table-bordered datatables-basic">
             <thead>
                 <tr class="p-2">
                     <th>ID</th>
@@ -34,80 +36,38 @@
                 </tr>
             </thead>
             <tbody id="table-body">
-                {{-- @foreach ($activities as $activity)
+                @foreach ($activities as $activity)
                 <tr>
                     <td>{{ $activity->id }}</td>
-                    <td>{{ $activity->activityId }}</td>
-                    <td>{{ $activity->studentId }}</td>
+                    <td>{{ $activity->activity_id }}</td>
+                    <td>{{ $activity->student_id }}</td>
                     <td>{{ $activity->created_at }}</td>
+                    <td>
+                        <div class="d-inline-flex">
+                            <button class="btn btn-sm btn-icon">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                            <button class="btn btn-sm btn-icon">
+                                <i class="bx bx-show"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>
-                @endforeach --}}
+                @endforeach
             </tbody>
         </table>
-        <div class="card-footer">
-            <div class="row">
-                <div id='activity_table_info' class="col-md-6">
-                </div>
-            </div>
-        </div>
     </section>
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        $('#myTable').DataTable();
+    $(function() {
+        $('#myTable').DataTable({
+            responsive: true,
+
+            // Default order
+            order: [[0, 'desc']]
+        });
     });
-
-    // const getActivities = async (length) => {
-    //     // get data from api endpoint
-    //     const response = await fetch(`/api/activities?length=${length}`).then((result) => {
-    //         if (!result.ok) {
-    //             throw new Error('Failed to fetch data, a network error occurred');
-    //         }
-    //         return result.json();
-    //     }).catch((err) => {
-    //         console.error('There was a problem getting activity data:', err);
-    //     });
-
-    //     // populate table with data
-    //     const tableBody = document.querySelector('#table-body');
-    //     tableBody.innerHTML = ''; 
-    //     Object.entries(response.data).forEach(([key, activity]) => {
-    //         const row = document.createElement('tr');
-    //         row.innerHTML = `
-    //             <td>${activity.id}</td>
-    //             <td>
-    //                 <a href="users/${activity.studentId}" class="alert-link">
-    //                     ${activity.studentId}
-    //                 </a>
-    //             </td>
-    //             <td>${activity.activityId}</td>
-    //             <td>${activity.createdAt}</td>
-    //             <td>
-    //                 <div class="d-inline-block text-nowrap">
-    //                     <button tabIndex="-1" class="btn btn-sm btn-icon delete-record">
-    //                         <i class="bx bx-trash"></i>
-    //                     </button>
-    //                     <button tabIndex="-1" class="btn btn-sm btn-icon view-record">
-    //                         <a href="users/${activity.studentId}" class="alert-link">
-    //                             <i class="bx bx-user"></i>
-    //                         </a>
-    //                     </button>
-    //                 </div>
-    //             </td>
-    //         `;
-    //         tableBody.appendChild(row);
-    //     });
-
-    //     // update table footer info
-    //     const tableInfo = document.querySelector('#activity_table_info');
-    //     tableInfo.innerHTML = `
-    //         <span>Showing ${response.meta.to} of ${response.meta.total} entries</span>
-    //     `;
-    // }
-
-    // // call function
-    // getActivities(10);
 </script>
 
 @endsection
