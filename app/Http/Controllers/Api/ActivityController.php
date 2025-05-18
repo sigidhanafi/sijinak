@@ -8,6 +8,8 @@ use App\Http\Resources\ActivityResource;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreActivityRequest;
 
+// File ini to do Devin semua
+
 class ActivityController extends Controller
 {
     /**

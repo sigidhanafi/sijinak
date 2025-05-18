@@ -20,6 +20,7 @@ class ActivityController extends Controller
 
     /**
      * Display a listing of the resource.
+     * TO DO: Hafiz (tapi udah keburu kelar)
      */
     public function index()
     {
@@ -38,6 +39,7 @@ class ActivityController extends Controller
 
     /**
      * Show the form for creating a new resource.
+     * TO DO: Devin
      */
     public function create()
     {
@@ -46,6 +48,7 @@ class ActivityController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * TO DO: Devin
      */
     public function store(Request $request)
     {
@@ -61,6 +64,7 @@ class ActivityController extends Controller
 
     /**
      * Display the specified resource.
+     * TO DO: Hafiz
      */
     public function show(Activity $activity)
     {
@@ -69,6 +73,7 @@ class ActivityController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     * TO DO: Devin
      */
     public function edit(Activity $activity)
     {
@@ -77,6 +82,7 @@ class ActivityController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * TO DO: Amel
      */
     public function update(Request $request, Activity $activity)
     {
@@ -85,6 +91,7 @@ class ActivityController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * TO DO: Ilham
      */
     public function destroy(Activity $activity)
     {

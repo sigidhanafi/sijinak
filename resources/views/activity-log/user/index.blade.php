@@ -1,3 +1,5 @@
+{{-- TO DO: Tegar + Salsa --}}
+
 @extends('layouts.app')
 
 @section('title', 'Home Page | Sijinak')
