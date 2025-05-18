@@ -45,7 +45,7 @@
                         </td>
                         <td>
                             @if($izin->status === 'pending')
-                                <span class="badge bg-warning text-dark">Menunggu</span>
+                                <span class="badge bg-warning text-white">Pending</span>
                             @elseif($izin->status === 'approved')
                                 <span class="badge bg-success">Disetujui</span>
                             @elseif($izin->status === 'rejected')

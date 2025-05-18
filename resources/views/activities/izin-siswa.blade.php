@@ -6,6 +6,10 @@
 <div class="container mt-4">
   <h2>Formulir Izin Siswa Keluar Sekolah</h2>
 
+  <p class="text-muted">
+    Silakan isi formulir berikut untuk mengajukan izin keluar. Permohonan akan diverifikasi oleh guru piket sebelum disetujui.
+</p>
+
   {{-- Notifikasi berhasil --}}
   @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -48,7 +52,9 @@
       <input type="file" name="dokumen" class="form-control" id="dokumen" required>
     </div>
 
-    <button type="submit" class="btn btn-primary">Kirim Permohonan</button>
+    <button type="submit" class="btn btn-primary">Kirim</button>
+    <button type="button" class="btn btn-secondary ms-2" onclick="window.history.back()">Batal</button>
+
   </form>
 </div>
 @endsection
