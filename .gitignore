@@ -27,7 +27,7 @@ yarn-error.log
 /vendor
 /node_modules
 /public/storage
-/public/*.php
+/public/**/*.php
 /storage/*.key
 .env
 .env.*.backup
