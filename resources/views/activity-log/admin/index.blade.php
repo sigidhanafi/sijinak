@@ -44,9 +44,13 @@
                     <td>{{ $activity->created_at }}</td>
                     <td>
                         <div class="d-inline-flex">
-                            <button class="btn btn-sm btn-icon">
-                                <i class="bx bx-trash"></i>
-                            </button>
+                            <form action="{{ route('activities.destroy', $activity->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus activity ini?');" class="me-1">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-icon">
+                                    <i class="bx bx-trash text-danger"></i>
+                                </button>
+                            </form>
                             <button class="btn btn-sm btn-icon">
                                 <i class="bx bx-show"></i>
                             </button>

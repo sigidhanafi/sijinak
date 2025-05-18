@@ -6,6 +6,7 @@ use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Action;
+use Illuminate\Http\RedirectResponse;
 
 class ActivityController extends Controller
 {
@@ -93,8 +94,10 @@ class ActivityController extends Controller
      * Remove the specified resource from storage.
      * TO DO: Ilham
      */
-    public function destroy(Activity $activity)
+    public function destroy($id): RedirectResponse
     {
-        //
+        $activity = Activity::findOrFail($id);
+        $activity->delete();
+        return redirect()->route('activities.index')->with('success', 'Activity berhasil dihapus.');
     }
 }
