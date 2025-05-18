@@ -85,7 +85,7 @@
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
-          <a href={{ route('activities.generate') }} class="menu-link">
+          <a href="/generate-qr" class="menu-link">
             <div data-i18n="Generate QR">Generate QR</div>
           </a>
         </li>
