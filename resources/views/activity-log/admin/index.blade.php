@@ -2,6 +2,7 @@
 
 @section('title', 'Admin Activity Log | Sijinak')
 
+
 @section('content')
 <style>
     select,
@@ -32,27 +33,30 @@
                     <th>User</th>
                     <th>Activity</th>
                     <th>Timestamp</th>
-                    <th>Action</th>
+                    <th class="text-center">Action</th>
                 </tr>
             </thead>
             <tbody id="table-body">
                 @foreach ($activities as $activity)
                 <tr>
-                    <td>{{ $activity->id }}</td>
-                    <td>{{ $activity->activity_id }}</td>
-                    <td>{{ $activity->student_id }}</td>
-                    <td>{{ $activity->created_at }}</td>
-                    <td>
-                        <div class="d-inline-flex">
-                            <form action="{{ route('activities.destroy', $activity->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus activity ini?');" class="me-1">
+                    <td class="text-center-middle">{{ $activity->id }}</td>
+                    <td class="text-center-middle">{{ $activity->activity_id }}</td>
+                    <td class="text-center-middle">{{ $activity->student_id }}</td>
+                    <td class="text-center-middle">{{ $activity->created_at }}</td>
+                    <td class="text-center align-middle">
+                        <div class="d-flex justify-content-center align-items-center gap-1">
+                            <form action="{{ route('activities.destroy', $activity->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus activity ini?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-icon">
-                                    <i class="bx bx-trash text-danger"></i>
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon me-1" title="Hapus">
+                                    <i class='bx bx-trash'></i>
                                 </button>
                             </form>
-                            <button class="btn btn-sm btn-icon">
-                                <i class="bx bx-show"></i>
+                                <button class="btn btn-info btn-sm btn-icon me-1" title="Lihat">
+                                    <i class="bx bx-show"></i>
+                                </button>
+                            <button class="btn btn-primary btn-sm btn-icon" title="Edit">
+                                <i class='bx bx-pencil'></i>
                             </button>
                         </div>
                     </td>

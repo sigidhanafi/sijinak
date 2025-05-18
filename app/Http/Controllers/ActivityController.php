@@ -87,7 +87,23 @@ class ActivityController extends Controller
      */
     public function update(Request $request, Activity $activity)
     {
-        //
+        // validate
+        $validated = $request->validate([
+            'studentId' => 'required|integer',
+            'activityId' => 'required|integer',
+            //'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx|max:20480' 
+        ]);
+        //upload document
+        //$file = $request->file('file');
+        //$file->storeAs('uploads', $file->hashName());
+
+        //create new activity
+        Activity::create([
+            'studentId' => $validated['studentId'],
+            'activityId' => $validated['activityId'],
+            //'file' => $file->hashName(),
+        ]);
+        return redirect()->route('activities.index')->with(['success' => 'Data Berhasil Disimpan!']);
     }
 
     /**
