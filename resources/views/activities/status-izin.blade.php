@@ -3,6 +3,7 @@
 @section('title', 'Status Izin Siswa')
 
 @section('content')
+<div class="container mt-4">
 <h2>Status Izin Siswa</h2>
 
 @if($izinList->isEmpty())
@@ -45,5 +46,5 @@
     </tbody>
   </table>
 @endif
-
+</div>
 @endsection
