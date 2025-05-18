@@ -21,10 +21,76 @@
         </form>
     </div>
 </div>
-
-<a href="{{ route('classes.create') }}" class="btn btn-primary me-2 mb-3"
-    >Tambah Kelas</a
+{{-- Tambah Kelas --}}
+<button
+    class="btn btn-primary mb-3"
+    type="button"
+    data-bs-toggle="offcanvas"
+    data-bs-target="#offcanvasTambahKelas"
+    aria-controls="offcanvasTambahKelas"
 >
+    Tambah Kelas
+</button>
+@php
+$showCreateOffcanvas = ($errors->any() && session('error_source') === 'create') || session('success');
+@endphp
+<div
+    class="offcanvas offcanvas-end {{ $showCreateOffcanvas ? 'show' : '' }}"
+    tabindex="-1"
+    id="offcanvasTambahKelas"
+    aria-labelledby="offcanvasTambahKelasLabel"
+    style="{{ $showCreateOffcanvas ? 'visibility: visible;' : '' }}"
+>
+    <div class="offcanvas-header">
+        <h3 class="offcanvas-title" id="offcanvasTambahKelasLabel">
+            Tambah Kelas
+        </h3>
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+        ></button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{{ route('classes.store') }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <label for="className" class="form-label">Nama</label>
+                <input
+                    type="text"
+                    name="className"
+                    class="form-control"
+                    placeholder="Kelas"
+                    required
+                />
+                <div id="nameHelp" class="form-text">
+                    Masukkan nama kelas.
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-2 mb-3">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button
+                    type="reset"
+                    class="btn btn-label-primary"
+                    data-bs-dismiss="offcanvas"
+                >
+                    Batal
+                </button>
+            </div>
+        </form>
+        @if (session('success'))
+        <div class="alert alert-success" role="alert">
+            {{ session('success') }}
+        </div>
+        @endif @if ($errors->any())
+        <div class="alert alert-danger">
+            @foreach ($errors->all() as $error) {{ $error }} @endforeach
+        </div>
+        @endif
+    </div>
+</div>
+{{-- Tabel Kelas --}}
 <div class="table-responsive">
     <table class="table">
         <thead>
@@ -39,44 +105,201 @@
             @forelse ($classes as $class)
             <tr>
                 <td>
-                    <a href="/classes/{{ $class->id }}" class="fw-medium"
+                    <a
+                        href="{{ route('classes.show', $class->id) }}"
+                        class="fw-medium"
                         >{{ $class->className }}</a
                     >
                 </td>
                 <td>-</td>
                 <td>{{ $class->totalStudents($class->id) }}</td>
-                <td>
-                    <div class="dropdown">
+                <td class="" style="">
+                    <div class="d-inline-block text-nowrap">
                         <button
+                            class="btn btn-sm btn-icon btn-edit"
                             type="button"
-                            class="btn p-0 dropdown-toggle hide-arrow"
-                            data-bs-toggle="dropdown"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasUbahKelas-{{ $class->id }}"
+                            aria-controls="offcanvasUbahKelas-{{ $class->id }}"
                         >
-                            <i class="bx bx-dots-vertical-rounded"></i>
+                            <i class="bx bx-edit"></i>
                         </button>
-                        <div class="dropdown-menu">
-                            <a
-                                class="dropdown-item"
-                                href="{{ route('classes.edit', $class->id) }}"
-                            >
-                                <i class="bx bx-edit-alt me-1"></i>Edit
-                            </a>
-                            <form
-                                action="{{ route('classes.destroy', $class->id) }}"
-                                method="POST"
-                                onsubmit="return confirm('Yakin ingin menghapus kelas ini?');"
-                            >
-                                @csrf @method('DELETE')
-                                <button class="dropdown-item" type="submit">
-                                    <i class="bx bx-trash me-1"></i>Hapus
-                                </button>
-                            </form>
+
+                        @php $showEditOffcanvas = (session('edit_success') &&
+                        session('edited_id') == $class->id) || ($errors->any()
+                        && session('error_source') === 'update' &&
+                        session('edited_id') == $class->id); @endphp
+
+                        <div
+                            class="offcanvas offcanvas-end {{ $showEditOffcanvas ? 'show' : '' }}"
+                            id="offcanvasUbahKelas-{{ $class->id }}"
+                            tabindex="-1"
+                            aria-labelledby="offcanvasUbahKelasLabel-{{ $class->id }}"
+                            style="{{ $showEditOffcanvas ? 'visibility: visible;' : '' }}"
+                        >
+                            <div class="offcanvas-header">
+                                <h3
+                                    class="offcanvas-title"
+                                    id="offcanvasUbahLabel"
+                                >
+                                    Ubah Kelas
+                                </h3>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="offcanvas"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <form
+                                    action="{{ route('classes.update', $class->id) }}"
+                                    method="POST"
+                                >
+                                    @csrf @method('PUT')
+                                    <div class="mb-3">
+                                        <label
+                                            for="className"
+                                            class="form-label"
+                                            >Kelas</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="className"
+                                            name="className"
+                                            value="{{ $class->className }}"
+                                            data-initial-value="{{ $class->className }}"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="d-flex gap-2 mt-2 mb-3">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                        >
+                                            Simpan
+                                        </button>
+                                        <button
+                                            type="reset"
+                                            class="btn btn-label-primary"
+                                            data-bs-dismiss="offcanvas"
+                                        >
+                                            Batal
+                                        </button>
+                                    </div>
+                                </form>
+                                @if (session('message'))
+                                <div class="alert alert-success" role="alert">
+                                    {{ session('message') }}
+                                </div>
+                                @endif @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    @foreach ($errors->all() as $error) {{
+                                    $error }} @endforeach
+                                </div>
+                                @endif
+                            </div>
                         </div>
+                        <form
+                            action="{{ route('classes.destroy', $class->id) }}"
+                            method="POST"
+                            class="d-inline-block"
+                        >
+                            @csrf @method('DELETE')
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-icon btn-delete"
+                                data-id="{{ $class->id }}"
+                                data-name="{{ $class->className }}"
+                            >
+                                <i class="bx bx-trash me-1"></i>
+                            </button>
+                        </form>
                     </div>
                 </td>
             </tr>
-            @empty @endforelse
+            @empty
+            <tr>
+                <td colspan="4" class="text-center">Tidak ada data kelas.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>
+{{-- Modal Konfirmasi Hapus --}}
+<div
+    class="modal fade"
+    id="deleteConfirmModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+    <div class="modal-dialog">
+        <form id="deleteForm" method="POST">
+            @csrf @method('DELETE')
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Konfirmasi Hapus</h5>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Yakin ingin menghapus kelas
+                        <strong id="modalClassName"></strong>?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection @section('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".btn-delete");
+        const deleteForm = document.getElementById("deleteForm");
+        const classNameEl = document.getElementById("modalClassName");
+        const deleteModalEl = document.getElementById("deleteConfirmModal");
+        const deleteModal = new bootstrap.Modal(deleteModalEl);
+
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", function () {
+                const classId = this.getAttribute("data-id");
+                const className = this.getAttribute("data-name");
+
+                classNameEl.textContent = className;
+                deleteForm.action = `/classes/${classId}`;
+                deleteModal.show();
+            });
+        });
+
+        // auto remove alert on offcanvas
+        document.querySelectorAll(".offcanvas .alert").forEach((alert) => {
+            setTimeout(() => {
+                alert.remove();
+            }, 2000);
+        });
+
+        document.querySelectorAll(".offcanvas").forEach((offcanvas) => {
+            offcanvas.addEventListener("hidden.bs.offcanvas", () => {
+                offcanvas
+                    .querySelectorAll(".alert")
+                    .forEach((alert) => alert.remove());
+            });
+        });
+    });
+</script>
 @endsection

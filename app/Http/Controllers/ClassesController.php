@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Classes;
 use App\Models\Students;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class ClassesController extends Controller
@@ -32,7 +33,7 @@ class ClassesController extends Controller
      */
     public function create()
     {
-        return view('classes.create');
+        // 
     }
 
     /**
@@ -40,19 +41,25 @@ class ClassesController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'className' => 'required|string|max:255|unique:classes,className',
-            'teacherId' => 'nullable|string|max:255|unique:classes,teacherId',
+            'teacherId' => 'nullable|string|max:255|',
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
             'teacherId.unique' => 'NIP ini sudah terdaftar.',
         ]);
 
-        Classes::create($validated);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error_source', 'create');
+        }
 
-        return redirect()->route('classes.create')->with('success', 'Kelas berhasil ditambahkan.');
+        Classes::create($validator->validated());
+
+        return redirect()->back()->with('success', 'Kelas berhasil ditambahkan.');
     }
-
     /**
      * Display the specified resource.
      */
@@ -71,14 +78,16 @@ class ClassesController extends Controller
 
         $students = $studentsQuery->get();
 
-        return view('classes.show', compact('class', 'students', 'search'));
+        $classes = Classes::orderBy('className')->get();
+
+        return view('classes.show', compact('class', 'classes', 'students', 'search'));
     }
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Classes $class)
     {
-        return view('classes.edit', compact('class'));
+        //
     }
 
     /**
@@ -86,7 +95,7 @@ class ClassesController extends Controller
      */
     public function update(Request $request, Classes $class)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'className' => [
                 'required',
                 'string',
@@ -104,9 +113,20 @@ class ClassesController extends Controller
             'teacherId.unique' => 'NIP ini sudah terdaftar.',
         ]);
 
-        $class->update($validated);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error_source', 'update')
+                ->with('edited_id', $class->id);
+        }
 
-        return redirect()->route('classes.edit', $class->id)->with('success', 'Kelas berhasil diperbarui.');
+        $class->update($validator->validated());
+
+        return redirect()->back()
+            ->with('edit_success', true)
+            ->with('edited_id', $class->id)
+            ->with('message', 'Data kelas berhasil diperbarui.');
     }
 
     /**
@@ -118,6 +138,6 @@ class ClassesController extends Controller
         $class->students()->update(['classId' => null]);
         $class->delete();
 
-        return redirect()->route('classes.index')->with('success', 'Class deleted successfully');
+        return redirect()->back();
     }
 }

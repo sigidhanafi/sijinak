@@ -18,9 +18,8 @@ class Students extends Model
         return $this->belongsTo(Classes::class, 'classId');
     }
 
-    // public function scopeSearch($query, $search): void
-    // {
-    //     $query->where('nisn', 'like', "%{$search}%")
-    //         ->orWhere('name', 'like', "%{$search}%");
-    // }
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Parents::class, 'parentId');
+    }
 }

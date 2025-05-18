@@ -126,7 +126,7 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="/classes" class="menu-link">
+                    <a href="{{ route('classes.index') }}" class="menu-link">
                         <div data-i18n="Kelas">Kelas</div>
                     </a>
                 </li>
@@ -136,12 +136,12 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="/students" class="menu-link">
+                    <a href="{{ route('students.index') }}" class="menu-link">
                         <div data-i18n="Siswa">Siswa</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                    <a href="{{ route('parents.index') }}" class="menu-link">
                         <div data-i18n="Wali">Wali</div>
                     </a>
                 </li>

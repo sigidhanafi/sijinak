@@ -1,23 +1,18 @@
-@extends('layouts.app') @section('title', $class->className . ' | Sijinak')
+@extends('layouts.app') @section('title', 'Home Page | Sijinak')
 @section('content')
-<div class="text-end mb-3">
-    <a href="{{ route('classes.index') }}" class="btn btn-outline-primary"
-        >Kembali</a
-    >
-</div>
-<h3>Daftar Siswa Kelas {{ $class->className }}</h3>
+<h3>Daftar Wali Siswa</h3>
 <div class="row mb-3">
     <div class="col-md-6">
         <form
             class="d-flex flex-column flex-sm-row gap-2"
             method="GET"
-            action="{{ route('classes.show', $class->id) }}"
+            action="{{ route('parents.index') }}"
         >
             <input
                 class="form-control"
                 type="text"
                 name="search"
-                placeholder="Cari Siswa"
+                placeholder="Cari Wali Siswa"
                 value="{{ request('search') }}"
             />
             <button class="btn btn-outline-primary" type="submit">
@@ -26,28 +21,28 @@
         </form>
     </div>
 </div>
-{{-- Tambah Siswa --}}
+{{-- Tambah Wali --}}
 <button
     class="btn btn-primary mb-3"
     type="button"
     data-bs-toggle="offcanvas"
-    data-bs-target="#offcanvasTambahSiswa"
-    aria-controls="offcanvasTambahSiswa"
+    data-bs-target="#offcanvasTambahWali"
+    aria-controls="offcanvasTambahWali"
 >
-    Tambah Siswa
+    Tambah Wali Siswa
 </button>
 @php $showCreateOffcanvas = ($errors->any() && session('error_source') ===
 'create') || session('success'); @endphp
 <div
     class="offcanvas offcanvas-end {{ $showCreateOffcanvas ? 'show' : '' }}"
     tabindex="-1"
-    id="offcanvasTambahSiswa"
-    aria-labelledby="offcanvasTambahSiswaLabel"
+    id="offcanvasTambahWali"
+    aria-labelledby="offcanvasTambahWaliLabel"
     style="{{ $showCreateOffcanvas ? 'visibility: visible;' : '' }}"
 >
     <div class="offcanvas-header">
-        <h3 class="offcanvas-title" id="offcanvasTambahSiswaLabel">
-            Tambah Siswa
+        <h3 class="offcanvas-title" id="offcanvasTambahWaliLabel">
+            Tambah Wali Siswa
         </h3>
         <button
             type="button"
@@ -57,43 +52,36 @@
         ></button>
     </div>
     <div class="offcanvas-body">
-        <form action="{{ route('students.store') }}" method="POST">
+        <form action="{{ route('parents.store') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="name" class="form-label">Nama</label>
+                <label for="parent_name" class="form-label"
+                    >Nama Wali Siswa</label
+                >
                 <input
                     type="text"
-                    name="name"
+                    name="parent_name"
+                    id="parent_name"
                     class="form-control"
                     placeholder="Nama Lengkap"
                     required
                 />
                 <div id="nameHelp" class="form-text">
-                    Masukkan nama siswa.
+                    Masukkan nama wali siswa.
                 </div>
             </div>
             <div class="mb-3">
-                <label for="nisn" class="form-label">NISN</label>
+                <label for="student_name" class="form-label">Nama Siswa</label>
                 <input
                     type="text"
-                    name="nisn"
+                    name="student_name"
+                    id="student_name"
                     class="form-control"
-                    placeholder="Nomor Induk Siswa Nasional"
+                    placeholder="Nama Lengkap"
+                    required
                 />
                 <div id="nameHelp" class="form-text">
-                    Masukkan NISN siswa.
-                </div>
-            </div>
-            <div class="mb-3">
-                <label for="classId" class="form-label">Kelas</label>
-                <select name="classId" class="form-select">
-                    <option value="" disabled selected>Kelas</option>
-                    <option value="{{ $class->id }}"
-                        >{{ $class->className }}</option
-                    >
-                </select>
-                <div id="nameHelp" class="form-text">
-                    Pilih kelas siswa.
+                    Masukkan nama siswa yang sudah terdaftar.
                 </div>
             </div>
             <div class="d-flex gap-2 mt-2 mb-3">
@@ -120,26 +108,66 @@
         @endif
     </div>
 </div>
-{{-- Tabel Siswa --}}
+{{-- Tabel Wali --}}
+<div class="mb-3 d-flex gap-2 align-items-center">
+    <span>Show:</span>
+    <form method="GET" action="{{ url()->current() }}">
+        <select
+            name="paginate"
+            onchange="this.form.submit()"
+            class="form-select"
+        >
+            @foreach ([10, 50, 100, 500] as $size) @php $selected =
+            request('paginate', 10) == $size ? 'selected' : ''; @endphp
+            <option value="{{ $size }}" {{ $selected }}>
+                {{ $size }}
+            </option>
+            @endforeach
+        </select>
+    </form>
+
+    @unless ($parents->onFirstPage())
+    <a
+        href="{{ $parents->previousPageUrl() }}&paginate={{ request('paginate', 10) }}"
+        class="btn btn-primary"
+    >
+        Previous
+    </a>
+    @endunless @if ($parents->hasMorePages())
+    <a
+        href="{{ $parents->nextPageUrl() }}&paginate={{ request('paginate', 10) }}"
+        class="btn btn-primary"
+    >
+        Next
+    </a>
+    @endif
+</div>
+
 <div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
                 <th>Nama</th>
-                <th>NISN</th>
-                <th>Kelas</th>
+                <th>Nama Siswa</th>
                 <th>Ubah Data</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($students as $student)
+            @forelse ($parents as $parent)
             <tr>
-                <td><span class="fw-medium">{{ $student->name }}</span></td>
-                <td><span class="fw-medium">{{ $student->nisn }}</span></td>
                 <td>
-                    <span class="fw-medium"
-                        >{{ $student->classes->className ?? '-' }}</span
+                    <a
+                        href="{{ route('parents.show', $parent->id) }}"
+                        class="fw-medium"
+                        >{{ $parent->name }}</a
                     >
+                </td>
+                <td>
+                    @forelse ($parent->students as $student)
+                    <span class="fw-medium">{{ $student->name }}</span><br />
+                    @empty
+                    <span>-</span>
+                    @endforelse
                 </td>
                 <td class="" style="">
                     <div class="d-inline-block text-nowrap">
@@ -147,22 +175,22 @@
                             class="btn btn-sm btn-icon btn-edit"
                             type="button"
                             data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasUbahSiswa-{{ $student->id }}"
-                            aria-controls="offcanvasUbahSiswa-{{ $student->id }}"
+                            data-bs-target="#offcanvasUbahWali-{{ $parent->id }}"
+                            aria-controls="offcanvasUbahWali-{{ $parent->id }}"
                         >
                             <i class="bx bx-edit"></i>
                         </button>
 
                         @php $showEditOffcanvas = (session('edit_success') &&
-                        session('edited_id') == $student->id) || ($errors->any()
+                        session('edited_id') == $parent->id) || ($errors->any()
                         && session('error_source') === 'update' &&
-                        session('edited_id') == $student->id); @endphp
+                        session('edited_id') == $parent->id); @endphp
 
                         <div
                             class="offcanvas offcanvas-end {{ $showEditOffcanvas ? 'show' : '' }}"
-                            id="offcanvasUbahSiswa-{{ $student->id }}"
+                            id="offcanvasUbahWali-{{ $parent->id }}"
                             tabindex="-1"
-                            aria-labelledby="offcanvasUbahSiswaLabel-{{ $student->id }}"
+                            aria-labelledby="offcanvasUbahWaliLabel-{{ $parent->id }}"
                             style="{{ $showEditOffcanvas ? 'visibility: visible;' : '' }}"
                         >
                             <div class="offcanvas-header">
@@ -170,7 +198,7 @@
                                     class="offcanvas-title"
                                     id="offcanvasUbahLabel"
                                 >
-                                    Ubah Siswa
+                                    Ubah Wali Siswa
                                 </h3>
                                 <button
                                     type="button"
@@ -181,63 +209,41 @@
                             </div>
                             <div class="offcanvas-body">
                                 <form
-                                    action="{{ route('students.update', $student->id) }}"
+                                    action="{{ route('parents.update', $parent->id) }}"
                                     method="POST"
                                 >
                                     @csrf @method('PUT')
                                     <div class="mb-3">
                                         <label for="name" class="form-label"
-                                            >Nama</label
+                                            >Nama Wali Siswa</label
                                         >
                                         <input
                                             type="text"
                                             class="form-control"
-                                            name="name"
-                                            id="name"
-                                            value="{{ $student->name }}"
-                                            data-initial-value="{{ $student->name }}"
+                                            name="parent_name"
+                                            id="parent_name"
+                                            value="{{ $parent->name }}"
+                                            data-initial-value="{{ $parent->name }}"
                                             required
                                         />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="nisn" class="form-label"
-                                            >NISN</label
+                                        <label
+                                            for="student_name"
+                                            class="form-label"
+                                            >Nama Siswa</label
                                         >
                                         <input
                                             type="text"
                                             class="form-control"
-                                            name="nisn"
-                                            id="nisn"
-                                            value="{{ $student->nisn }}"
-                                            data-initial-value="{{ $student->nisn }}"
+                                            name="student_name"
+                                            id="student_name"
+                                            value="{{ $parent->students->first()->name ?? '' }}"
+                                            data-initial-value="{{ $parent->students->first()->name ?? '' }}"
+                                            readonly
                                         />
                                     </div>
-                                    <div class="mb-3">
-                                        <label
-                                            for="defaultSelect"
-                                            class="form-label"
-                                            >Pilih Kelas</label
-                                        >
-                                        <select
-                                            name="classId"
-                                            class="form-select"
-                                            data-initial-value="{{ $student->classId }}"
-                                        >
-                                            @foreach ($classes as $class) @php
-                                            $selected = $student->classId ==
-                                            $class->id ? 'selected' : '';
-                                            @endphp
-                                            <option
-                                                value="{{ $class->id }}"
-                                                {{
-                                                $selected
-                                                }}
-                                            >
-                                                {{ $class->className }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+
                                     <div class="d-flex gap-2 mt-2 mb-3">
                                         <button
                                             type="submit"
@@ -269,7 +275,7 @@
                             </div>
                         </div>
                         <form
-                            action="{{ route('students.destroy', $student->id) }}"
+                            action="{{ route('parents.destroy', $parent->id) }}"
                             method="POST"
                             class="d-inline-block"
                         >
@@ -277,8 +283,8 @@
                             <button
                                 type="button"
                                 class="btn btn-sm btn-icon btn-delete"
-                                data-id="{{ $student->id }}"
-                                data-name="{{ $student->name }}"
+                                data-id="{{ $parent->id }}"
+                                data-name="{{ $parent->name }}"
                             >
                                 <i class="bx bx-trash me-1"></i>
                             </button>
@@ -288,7 +294,9 @@
             </tr>
             @empty
             <tr>
-                <td colspan="4" class="text-center">Tidak ada data siswa.</td>
+                <td colspan="4" class="text-center">
+                    Tidak ada data wali siswa.
+                </td>
             </tr>
             @endforelse
         </tbody>
@@ -317,7 +325,7 @@
                 <div class="modal-body">
                     <p>
                         Yakin ingin menghapus siswa
-                        <strong id="studentName"></strong>?
+                        <strong id="parentName"></strong>?
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -339,22 +347,21 @@
     document.addEventListener("DOMContentLoaded", function () {
         const deleteButtons = document.querySelectorAll(".btn-delete");
         const deleteForm = document.getElementById("deleteForm");
-        const studentNameEl = document.getElementById("studentName");
+        const parentNameEl = document.getElementById("parentName");
         const deleteModalEl = document.getElementById("deleteConfirmModal");
         const deleteModal = new bootstrap.Modal(deleteModalEl);
 
         deleteButtons.forEach((button) => {
             button.addEventListener("click", function () {
-                const studentId = this.getAttribute("data-id");
-                const studentName = this.getAttribute("data-name");
+                const parentId = this.getAttribute("data-id");
+                const parentName = this.getAttribute("data-name");
 
-                studentNameEl.textContent = studentName;
-                deleteForm.action = `/students/${studentId}`;
+                parentNameEl.textContent = parentName;
+                deleteForm.action = `/parents/${parentId}`;
                 deleteModal.show();
             });
         });
 
-        // auto remove alert on offcanvas
         document.querySelectorAll(".offcanvas .alert").forEach((alert) => {
             setTimeout(() => {
                 alert.remove();

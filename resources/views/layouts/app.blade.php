@@ -68,7 +68,11 @@
             rel="stylesheet"
             href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}"
         />
-
+        <!-- CSS DataTables -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+        />
         <!-- Page CSS -->
 
         <!-- Helpers -->
@@ -140,7 +144,12 @@
 
         <!-- Main JS -->
         <script src="{{ asset('assets/js/main.js') }}"></script>
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
+        <!-- JS DataTables -->
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
         <!-- Page JS -->
+        @yield('scripts')
     </body>
 </html>

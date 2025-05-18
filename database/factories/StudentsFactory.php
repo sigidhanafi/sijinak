@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Parents;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,10 +17,13 @@ class StudentsFactory extends Factory
      */
     public function definition(): array
     {
+        $parentId = Parents::factory()->create()->id;
+
         return [
             'name' => $this->faker->name(),
             'nisn' => $this->faker->unique()->randomNumber(5, true),
-            'classId' => $this->faker->numberBetween(1, 6)
+            'classId' => $this->faker->numberBetween(1, 6),
+            'parentId' => $parentId,
         ];
     }
 }

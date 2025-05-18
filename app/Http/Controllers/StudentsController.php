@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Students;
 use App\Models\Classes;
+use App\Models\Students;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class StudentsController extends Controller
 {
@@ -14,7 +15,7 @@ class StudentsController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Students::with('classes'); // Memuat relasi kelas
+        $query = Students::with('classes');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -27,9 +28,16 @@ class StudentsController extends Controller
             });
         }
 
-        $students = $query->orderBy('nisn')->get(); // Urutkan berdasarkan nisn
+        $perPage = $request->input('paginate', 10);
+        if (!in_array($perPage, [10, 50, 100, 500])) {
+            $perPage = 10;
+        }
 
-        return view('students.index', compact('students'));
+        $students = $query->orderBy('nisn')->paginate($perPage);
+
+        $classes = Classes::orderBy('className')->get();
+
+        return view('students.index', compact('students', 'classes'));
     }
 
 
@@ -38,47 +46,49 @@ class StudentsController extends Controller
      */
     public function create()
     {
-        $classes = Classes::get();
-        return view('students.create', compact('classes'));
+        //
     }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // Validasi input
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'nisn' => 'required|string|unique:students,nisn',
-            'classId' => 'required|exists:classes,id',
+            'nisn' => 'nullable|string|unique:students,nisn',
+            'classId' => 'nullable|exists:classes,id',
         ], [
-            'nisn.unique' => 'NISN ini sudah terdaftar.', // Pesan validasi untuk NISN yang duplikat
+            'nisn.unique' => 'NISN ini sudah terdaftar.',
         ]);
 
-        // Simpan data mahasiswa
-        Students::create($validated);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error_source', 'create'); // ini kunci untuk tahu bahwa ini error dari "Tambah"
+        }
 
-        // Redirect ke halaman create dengan pesan sukses
-        return redirect()->route('students.create')->with('success', 'Siswa berhasil ditambahkan.');
+        Students::create($validator->validated());
+
+        return redirect()->back()->with('success', 'Siswa berhasil ditambahkan.');
     }
-
-
-
     /**
      * Display the specified resource.
      */
-    public function show(Students $students)
+    public function show(Students $student)
     {
-        //
+        $student->load(['classes', 'parent']);
+        return view('students.show', compact('student'));
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Students $student)
     {
-        $classes = Classes::orderBy('className')->get();
-        return view('students.edit', compact('student', 'classes'));
+        //
     }
 
     /**
@@ -86,12 +96,11 @@ class StudentsController extends Controller
      */
     public function update(Request $request, Students $student)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'nisn' => [
-                'required',
+                'nullable',
                 'string',
-                'max:20',
                 Rule::unique('students', 'nisn')->ignore($student->id),
             ],
             'classId' => 'nullable|exists:classes,id',
@@ -100,19 +109,28 @@ class StudentsController extends Controller
             'classId.exists' => 'Kelas tidak ditemukan.',
         ]);
 
-        $student->update($validated);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error_source', 'update')
+                ->with('edited_id', $student->id);
+        }
 
-        return redirect()->route('students.edit', $student->id)->with('success', 'Data siswa berhasil diperbarui.');
+        $student->update($validator->validated());
+
+        return redirect()->back()
+            ->with('edit_success', true)
+            ->with('edited_id', $student->id)
+            ->with('message', 'Data siswa berhasil diperbarui.');
     }
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Students $student)
+    public function destroy(Students $student)
     {
         $student->delete();
-
-        $redirectTo = $request->input('redirect_to');
-        return redirect($redirectTo ?? route('students.index'))
-            ->with('success', 'Siswa berhasil dihapus.');
+        return redirect()->back();
     }
 }
