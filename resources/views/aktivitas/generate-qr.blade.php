@@ -15,7 +15,7 @@
             </select>
         </div>
 
-        <div id="otherActivityWrapper" class="mt-3" style="margin-bottom: 1em;"></div>
+        <div id="otherActivityWrapper" class="mt-3 mb-3"></div>
 
         <!-- Tombol Generate (awalnya tampil) -->
         <button id="startBtn" onclick="startAutoGenerate()" class="btn btn-primary">
@@ -23,7 +23,7 @@
         </button>
 
         <!-- Tombol Stop (awalnya tidak tampil) -->
-        <button id="stopBtn" onclick="stopAutoGenerate()" class="btn btn-danger" style="display: none;">
+        <button id="stopBtn" onclick="stopAutoGenerate()" class="btn btn-danger" style="display: none">
             Stop Generate
         </button>
 
