@@ -85,7 +85,7 @@
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
-          <a href={{ route('activities.izin-siswa') }} class="menu-link">
+          <a href="{{ route('activities.izin-siswa') }}" class="menu-link">
             <div data-i18n="Izin Siswa">Izin Siswa</div>
           </a>
         </li>
@@ -94,9 +94,14 @@
             <div data-i18n="Status Izin">Status Izin</div>
           </a>
         </li>
-        
+        <li class="menu-item">
+          <a href="{{ route('activities.validasi-izin') }}" class="menu-link">
+            <div data-i18n="Validasi Guru Piket">Validasi Guru Piket</div>
+          </a>
+        </li>
       </ul>
     </li>
+    
 
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">

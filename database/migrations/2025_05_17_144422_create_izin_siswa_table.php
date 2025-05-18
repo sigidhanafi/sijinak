@@ -6,26 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
-{
-    Schema::create('izin_siswa', function (Blueprint $table) {
-        $table->id();
-        $table->unsignedBigInteger('user_id')->nullable();
-        $table->text('alasan');
-        $table->dateTime('waktu_keluar');
-        $table->string('dokumen');
-        $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('izin_siswa', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->text('alasan');
+            $table->dateTime('waktu_keluar');
+            $table->string('dokumen');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->longText('qr_code')->nullable(); // optional
+            $table->timestamps();
+        });
+    }
 
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('izin_siswa');

@@ -3,6 +3,7 @@
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ActivitiesController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IzinSiswaController;
 
 
 Route::get('/', function () {
@@ -17,5 +18,12 @@ Route::post('/izin-siswa', [ActivitiesController::class, 'store'])->name('activi
 
 Route::get('/status-izin', [ActivitiesController::class, 'status'])->name('activities.status');
 
+Route::get('/validasi-izin', [PermissionController::class, 'index'])->name('activities.validasi-izin');
+
+Route::middleware(['auth', 'role:guru_piket'])->group(function () {
+    Route::get('/guru-piket/izin-siswa', [IzinSiswaController::class, 'index'])->name('permission.index');
+    Route::post('/guru-piket/izin-siswa/{id}/approve', [IzinSiswaController::class, 'approve'])->name('permission.approve');
+    Route::post('/guru-piket/izin-siswa/{id}/reject', [IzinSiswaController::class, 'reject'])->name('permission.reject');
+});
 
 
