@@ -105,7 +105,6 @@ class ParentsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-
     public function update(Request $request, Parents $parent)
     {
         $validator = Validator::make($request->all(), [
@@ -121,9 +120,11 @@ class ParentsController extends Controller
                 ->with('edited_id', $parent->id);
         }
 
-        $studentExists = Students::where('name', $request->input('student_name'))->exists();
+        $validated = $validator->validated();
 
-        if (!$studentExists) {
+        $student = Students::whereRaw('LOWER(name) = ?', [strtolower($validated['student_name'])])->first();
+
+        if (!$student) {
             return redirect()->back()
                 ->withInput()
                 ->with('error_source', 'update')
@@ -131,8 +132,24 @@ class ParentsController extends Controller
                 ->withErrors(['student_name' => 'Nama siswa tidak ditemukan.']);
         }
 
-        $parent->name = $request->input('parent_name');
+        if ($student->parent && $student->parent->id !== $parent->id) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error_source', 'update')
+                ->with('edited_id', $parent->id)
+                ->withErrors(['student_name' => 'Siswa ini sudah memiliki wali yang terdaftar.']);
+        }
+
+        $parent->name = $validated['parent_name'];
         $parent->save();
+
+        foreach ($parent->students as $existingStudent) {
+            $existingStudent->parent()->dissociate();
+            $existingStudent->save();
+        }
+
+        $student->parent()->associate($parent);
+        $student->save();
 
         return redirect()->back()
             ->with('edit_success', true)

@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('nisn')->nullable()->unique();
-            $table->foreignId('classId')->nullable()->constrained(
+            $table->string('nisn')->unique();
+            $table->foreignId('classId')->constrained(
                 table: 'classes',
                 indexName: 'classes_classId'
             )->onDelete('set null');
-            $table->foreignId('parentId')->nullable()->constrained(
+            $table->foreignId('parentId')->constrained(
                 table: 'parents',
                 indexName: 'parents_parentId'
             )->onDelete('set null');
