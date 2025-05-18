@@ -74,6 +74,7 @@
                     name="nisn"
                     class="form-control"
                     placeholder="Nomor Induk Siswa Nasional"
+                    required
                 />
                 <div id="nameHelp" class="form-text">
                     Masukkan NISN siswa.
@@ -81,7 +82,7 @@
             </div>
             <div class="mb-3">
                 <label for="classId" class="form-label">Kelas</label>
-                <select name="classId" class="form-select">
+                <select name="classId" class="form-select" required>
                     <option value="" disabled selected>Kelas</option>
                     @foreach ($classes as $class)
                     <option value="{{ $class->id }}"
@@ -249,6 +250,7 @@
                                             id="nisn"
                                             value="{{ $student->nisn }}"
                                             data-initial-value="{{ $student->nisn }}"
+                                            required
                                         />
                                     </div>
                                     <div class="mb-3">
@@ -261,6 +263,7 @@
                                             name="classId"
                                             class="form-select"
                                             data-initial-value="{{ $student->classId }}"
+                                            required
                                         >
                                             @foreach ($classes as $class) @php
                                             $selected = $student->classId ==

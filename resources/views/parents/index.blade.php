@@ -240,7 +240,7 @@
                                             id="student_name"
                                             value="{{ $parent->students->first()->name ?? '' }}"
                                             data-initial-value="{{ $parent->students->first()->name ?? '' }}"
-                                            readonly
+                                            required
                                         />
                                     </div>
 

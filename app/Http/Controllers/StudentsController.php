@@ -55,8 +55,8 @@ class StudentsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'nisn' => 'nullable|string|unique:students,nisn',
-            'classId' => 'nullable|exists:classes,id',
+            'nisn' => 'required|string|unique:students,nisn',
+            'classId' => 'required|exists:classes,id',
         ], [
             'nisn.unique' => 'NISN ini sudah terdaftar.',
         ]);
@@ -99,14 +99,13 @@ class StudentsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'nisn' => [
-                'nullable',
+                'required',
                 'string',
                 Rule::unique('students', 'nisn')->ignore($student->id),
             ],
-            'classId' => 'nullable|exists:classes,id',
+            'classId' => 'required|exists:classes,id',
         ], [
             'nisn.unique' => 'NISN ini sudah terdaftar.',
-            'classId.exists' => 'Kelas tidak ditemukan.',
         ]);
 
         if ($validator->fails()) {

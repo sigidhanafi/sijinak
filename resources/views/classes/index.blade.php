@@ -176,13 +176,13 @@ $showCreateOffcanvas = ($errors->any() && session('error_source') === 'create') 
                                     <div class="d-flex gap-2 mt-2 mb-3">
                                         <button
                                             type="submit"
-                                            class="btn btn-primary"
+                                            class="btn btn-primary mt-2"
                                         >
                                             Simpan
                                         </button>
                                         <button
                                             type="reset"
-                                            class="btn btn-label-primary"
+                                            class="btn btn-label-primary mt-2"
                                             data-bs-dismiss="offcanvas"
                                         >
                                             Batal

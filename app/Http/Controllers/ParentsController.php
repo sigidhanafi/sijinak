@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Parents;
 use App\Models\Students;
-use App\Models\Classes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,9 +51,6 @@ class ParentsController extends Controller
         $validator = Validator::make($request->all(), [
             'parent_name'  => 'required|string|max:255',
             'student_name' => 'required|string|max:255',
-        ], [
-            'parent_name.required'  => 'Nama orang tua harus diisi.',
-            'student_name.required' => 'Nama siswa harus diisi.',
         ]);
 
         if ($validator->fails()) {
@@ -109,12 +105,12 @@ class ParentsController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function update(Request $request, Parents $parent)
     {
         $validator = Validator::make($request->all(), [
             'parent_name' => 'required|string|max:255',
-        ], [
-            'parent_name.required' => 'Nama orang tua harus diisi.',
+            'student_name' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -125,7 +121,17 @@ class ParentsController extends Controller
                 ->with('edited_id', $parent->id);
         }
 
-        $parent->name = $validator->validated()['parent_name'];
+        $studentExists = Students::where('name', $request->input('student_name'))->exists();
+
+        if (!$studentExists) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error_source', 'update')
+                ->with('edited_id', $parent->id)
+                ->withErrors(['student_name' => 'Nama siswa tidak ditemukan.']);
+        }
+
+        $parent->name = $request->input('parent_name');
         $parent->save();
 
         return redirect()->back()
