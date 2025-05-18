@@ -13,6 +13,11 @@
     @if($izinList->isEmpty())
         <p>Tidak ada izin siswa yang menunggu validasi.</p>
     @else
+        <p class="text-muted">
+            Berikut adalah daftar permohonan izin yang diajukan oleh siswa dan menunggu validasi oleh guru piket.
+            Silakan tinjau dan validasi izin sesuai kebijakan sekolah.
+        </p>
+
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -33,12 +38,20 @@
                         <td>{{ \Carbon\Carbon::parse($izin->waktu_keluar)->format('d-m-Y H:i') }}</td>
                         <td>
                             @if($izin->dokumen)
-                            <a href="{{ asset('storage/'.$izin->dokumen) }}" target="_blank">Lihat Dokumen</a>
+                                <a href="{{ asset('storage/'.$izin->dokumen) }}" target="_blank">Lihat Dokumen</a>
                             @else
-                            Tidak ada
+                                Tidak ada
                             @endif
                         </td>
-                        <td>{{ ucfirst($izin->status) }}</td>
+                        <td>
+                            @if($izin->status === 'pending')
+                                <span class="badge bg-warning text-dark">Menunggu</span>
+                            @elseif($izin->status === 'approved')
+                                <span class="badge bg-success">Disetujui</span>
+                            @elseif($izin->status === 'rejected')
+                                <span class="badge bg-danger">Ditolak</span>
+                            @endif
+                        </td>
                         <td>
                             @if($izin->status === 'approved' && $izin->qr_code)
                                 <img src="data:image/png;base64, {!! $izin->qr_code !!}" alt="QR Code" width="100">
