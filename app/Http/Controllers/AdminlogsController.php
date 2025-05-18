@@ -26,4 +26,22 @@ class AdminlogsController extends Controller
 
         return redirect('/adminlogs')->with('success', 'Log added successfully!');
     }
+
+    public function search(Request $request)
+{
+    $search = $request->input('search');
+
+    // Fetch filtered logs
+    $logs = Adminlogs::with('user')
+        ->where('activity_type', 'LIKE', "%{$search}%")
+        ->orwhere('created_at', 'LIKE', "%{$search}%")
+        ->orWhereHas('user', function ($query) use ($search) {
+            $query->where('name', 'LIKE', "%{$search}%");
+        })
+        ->get();
+
+    // Return the results as HTML (Blade partial)
+    return view('adminlogs.partials.searchres', compact('logs'))->render();
+}
+
 }

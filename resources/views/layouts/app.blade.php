@@ -113,6 +113,8 @@
     <script src="{{ asset('assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
+
+    @yield('scripts')
   </body>
 </html>
 

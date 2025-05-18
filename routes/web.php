@@ -9,3 +9,4 @@ Route::get('/', function () {
 
 Route::get('/adminlogs', [AdminlogsController::class, 'index']);
 Route::post('/adminlogs', [AdminlogsController::class, 'store']);
+Route::get('/adminlogs/search', [AdminlogsController::class, 'search'])->name('adminlogs.search');
