@@ -102,6 +102,15 @@
       </ul>
     </li>
 
+    <li class="menu-item">
+      <a href="javascript:void(0);" class="menu-link ">
+        <i class="menu-icon tf-icons bx bx-note"></i>
+        <div data-i18n="Log Aktivitas Admin">Log Aktivitas Admin</div>
+        <div class="badge bg-primary rounded-pill ms-auto">5</div>
+      </a>
+
+    </li>
+
     <!-- Misc -->
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text" data-i18n="Misc">Misc</span>
