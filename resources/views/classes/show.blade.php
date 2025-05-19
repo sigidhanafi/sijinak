@@ -222,9 +222,13 @@
                                         <select
                                             name="classId"
                                             class="form-select"
+                                            value="{{ $student->classId }}"
                                             data-initial-value="{{ $student->classId }}"
                                             required
                                         >
+                                            <option value="" disabled selected
+                                                >Kelas</option
+                                            >
                                             @foreach ($classes as $class) @php
                                             $selected = $student->classId ==
                                             $class->id ? 'selected' : '';
