@@ -12,7 +12,7 @@ class AdminlogsSeeder extends Seeder
 
     public function run()
     {
-        Adminlogs::factory()->count(10)->create();
+        Adminlogs::factory()->count(40)->create();
     }
 }
 

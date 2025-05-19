@@ -6,14 +6,19 @@ use App\Models\Adminlogs;
 use Illuminate\Http\Request;
 
 class AdminlogsController extends Controller
-{
+{   //TODO add pagination, pass to the partials
     // Display all logs
+    // public function index()
+    // {
+    //     $logs = Adminlogs::with('user')->get();
+    //     return view('adminlogs.index', compact('logs'));
+    // }
+
     public function index()
     {
-        $logs = Adminlogs::with('user')->get();
+        $logs = Adminlogs::with('user')->paginate(20); // 15 items per page
         return view('adminlogs.index', compact('logs'));
     }
-
     // Insert new log
     public function store(Request $request)
     {
@@ -27,7 +32,24 @@ class AdminlogsController extends Controller
         return redirect('/adminlogs')->with('success', 'Log added successfully!');
     }
 
-// TODO finish filter using start and end date
+
+//     public function search(Request $request)
+// {
+//     $search = $request->input('search');
+
+//     // Fetch filtered logs
+//     $logs = Adminlogs::with('user')
+//         ->where('activity_type', 'LIKE', "%{$search}%")
+//         ->orwhere('created_at', 'LIKE', "%{$search}%")
+//         ->orWhereHas('user', function ($query) use ($search) {
+//             $query->where('name', 'LIKE', "%{$search}%");
+//         })
+//         ->get();
+
+//     // Return the results as HTML (Blade partial)
+//     return view('adminlogs.partials.searchres', compact('logs'))->render();
+// }
+
     public function search(Request $request)
 {
     $search = $request->input('search');
@@ -39,11 +61,12 @@ class AdminlogsController extends Controller
         ->orWhereHas('user', function ($query) use ($search) {
             $query->where('name', 'LIKE', "%{$search}%");
         })
-        ->get();
+        ->paginate(20);
 
     // Return the results as HTML (Blade partial)
     return view('adminlogs.partials.searchres', compact('logs'))->render();
 }
+
 // validasi input tanggal TODO: query 
     public function filter(Request $request){
 
