@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Illuminate\Notifications\Action;
+use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ActivityController extends Controller
 {
@@ -44,7 +47,7 @@ class ActivityController extends Controller
      */
     public function create()
     {
-        //
+        //show the form to
     }
 
     /**
@@ -76,34 +79,58 @@ class ActivityController extends Controller
      * Show the form for editing the specified resource.
      * TO DO: Devin
      */
-    public function edit(Activity $activity)
+    public function edit(Activity $activity): View
     {
-        //
+        //show the form to edit activity
+        //get all activities
+        $activities = Activity::all();
+        //render view with activities
+        return view('activity-log.admin.edit', compact('activities', 'activity'));
     }
 
     /**
      * Update the specified resource in storage.
      * TO DO: Amel
      */
-    public function update(Request $request, Activity $activity)
+    public function update(Request $request, Activity $activity): RedirectResponse
     {
         // validate
         $validated = $request->validate([
-            'studentId' => 'required|integer',
-            'activityId' => 'required|integer',
-            //'file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx|max:20480' 
+            'student_id' => 'required|integer',
+            'activity_id' => 'required|string',
+            'file' => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:20480' 
         ]);
-        //upload document
-        //$file = $request->file('file');
-        //$file->storeAs('uploads', $file->hashName());
-
-        //create new activity
-        Activity::create([
-            'studentId' => $validated['studentId'],
-            'activityId' => $validated['activityId'],
-            //'file' => $file->hashName(),
+        //check if file is uploaded
+        if ($request->hasFile('file')){
+            $file = $request->file('file');
+            //add origin file name on local storage
+            $originalName = $file->getClientOriginalName();
+            //clear the name of file so it won't be duplicated
+            $filename = pathinfo($originalName, PATHINFO_FILENAME);
+            $extension = $file->getClientOriginalExtension();
+            $safeName = \Illuminate\Support\Str::slug($filename)
+                    . '_' . time()
+                    . '.' . $extension;
+            //delete old file
+            Storage::delete('public/activities/' . $activity->file);
+            //upload new file
+            $file = $request->file('file');
+            $file->storeAs('public/activities', $safeName);
+            //update activity with new file
+            $activity->update([
+                'student_id' => $validated['student_id'],
+                'activity_id' => $validated['activity_id'],
+                'file' => $safeName,
+            ]);
+        } else {
+            //update activity without new file
+        $activity->update([
+            'student_id' => $validated['student_id'],
+            'activity_id' => $validated['activity_id'],
         ]);
-        return redirect()->route('activities.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        }
+        Alert::success('Berhasil','Data Berhasil Diubah!');
+        return redirect()->route('activities.index')->with(['success', 'Data Berhasil Diubah!']);
     }
 
     /**
@@ -117,3 +144,4 @@ class ActivityController extends Controller
         return redirect()->route('activities.index')->with('success', 'Activity berhasil dihapus.');
     }
 }
+

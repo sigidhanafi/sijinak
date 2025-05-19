@@ -119,6 +119,6 @@
   <script src="{{ asset('assets/js/main.js') }}"></script>
 
   <!-- Page JS -->
+   @include('sweetalert::alert')
 </body>
-
 </html>

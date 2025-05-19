@@ -12,6 +12,6 @@ class Activity extends Model
 
     protected $fillable = [
         'student_id',
-        'activity_id',
+        'activity_id'
     ];
 }

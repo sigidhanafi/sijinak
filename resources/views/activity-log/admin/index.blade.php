@@ -2,7 +2,6 @@
 
 @section('title', 'Admin Activity Log | Sijinak')
 
-
 @section('content')
 <style>
     select,
@@ -40,8 +39,8 @@
                 @foreach ($activities as $activity)
                 <tr>
                     <td class="text-center-middle">{{ $activity->id }}</td>
-                    <td class="text-center-middle">{{ $activity->activity_id }}</td>
                     <td class="text-center-middle">{{ $activity->student_id }}</td>
+                    <td class="text-center-middle">{{ $activity->activity_id }}</td>
                     <td class="text-center-middle">{{ $activity->created_at }}</td>
                     <td class="text-center align-middle">
                         <div class="d-flex justify-content-center align-items-center gap-1">
@@ -55,9 +54,9 @@
                                 <button class="btn btn-info btn-sm btn-icon me-1" title="Lihat">
                                     <i class="bx bx-show"></i>
                                 </button>
-                            <button class="btn btn-primary btn-sm btn-icon" title="Edit">
+                            <a href="{{ route('activities.edit', $activity) }}" class="btn btn-primary btn-sm btn-icon" title="Edit">
                                 <i class='bx bx-pencil'></i>
-                            </button>
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -67,6 +66,7 @@
     </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(function() {
         $('#myTable').DataTable({
@@ -76,6 +76,26 @@
             order: [[0, 'desc']]
         });
     });
+        //message with sweetalert
+</script>
+
+<script>
+    if (session('success'))
+            Swal.fire({
+                icon: "success",
+                title: "BERHASIL",
+                text: "{{ session('success') }}", 
+                showConfirmButton: false,
+                timer: 2000
+            });
+        else if (session('error'))
+            Swal.fire({
+                icon: "error",
+                title: "GAGAL!",
+                text: "{{ session('error') }}", 
+                showConfirmButton: false,
+                timer: 2000
+            });
 </script>
 
 @endsection

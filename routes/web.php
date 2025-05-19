@@ -9,4 +9,4 @@ Route::get('/', function () {
 });
 
 // Resource Routes
-Route::resource('/activities', ActivityController::class);
+Route::resource('activities', ActivityController::class);
