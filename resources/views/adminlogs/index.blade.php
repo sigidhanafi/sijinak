@@ -5,7 +5,7 @@
 @section('content')
     <h1>Administrator Activity Log</h1>
 
-    <div class="card my-20 sticky-top">
+    <div id='card-container' class="card my-20 sticky-top">
         <div class="card-header ">
             <div class="row g-3">
                 <!-- Header -->
@@ -71,25 +71,54 @@
 
 @endsection
 
+{{-- ADDED DEBOUNCE, AJAX scenario for pagination call --}}
 @section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#search').on('keyup', function() {
-                let query = $(this).val();
+            function debounce(func, timeout = 250) {
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => {
+                        func.apply(this, args);
+                    }, timeout)
+                };
+            }
+            const processChange = debounce((page, query) => fetchData(page, query));
+            let query = '';
 
+            $(document).on('click', '.pagination a', function(e) {
+                e.preventDefault();
+                let page = $(this).attr('href').split('page=')[1];
+                fetchData(page, query);
+            });
+
+            $('#search').on('keyup', function() {
+                query = $(this).val();
+                let page = 1;
+                processChange(page, query);
+            });
+
+            function fetchData(page, query) {
                 $.ajax({
                     url: "{{ route('adminlogs.search') }}",
                     method: 'GET',
                     data: {
+                        page: page,
                         search: query
                     },
                     success: function(data) {
-                        $('#searchResults').html(data);
+                        $('#searchResults').html(data); //ganti isi saerchresult sama partial
+                        const url = new URL(window.location);//ambil url yang ada di browser
+                        url.searchParams.set('page', page);//auto search param
+                        window.history.pushState({}, '', url);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Ajax error:', error);
                     }
                 });
-            });
+            }
         });
     </script>
 @endsection
-{{-- TOLONGIN DIT: benerin qih --}}
