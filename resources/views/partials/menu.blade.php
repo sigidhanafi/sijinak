@@ -118,14 +118,18 @@
             </ul>
         </li>
 
-        <li class="menu-item">
+        @php
+        $isDataManagementActive = request()->routeIs('classes.*') || request()->routeIs('students.*') || request()->routeIs('parents.*') || request()->routeIs('teachers.*');
+        @endphp
+
+        <li class="menu-item {{ $isDataManagementActive ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-table"></i>
                 <div data-i18n="Data Management">Data Management</div>
                 <div class="badge bg-primary rounded-pill ms-auto">3</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('classes.*') ? 'active' : '' }}">
                     <a href="{{ route('classes.index') }}" class="menu-link">
                         <div data-i18n="Kelas">Kelas</div>
                     </a>
@@ -135,12 +139,12 @@
                         <div data-i18n="Guru">Guru</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('students.*') ? 'active' : '' }}">
                     <a href="{{ route('students.index') }}" class="menu-link">
                         <div data-i18n="Siswa">Siswa</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('parents.*') ? 'active' : '' }}">
                     <a href="{{ route('parents.index') }}" class="menu-link">
                         <div data-i18n="Wali">Wali</div>
                     </a>
