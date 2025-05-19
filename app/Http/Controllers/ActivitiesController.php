@@ -16,7 +16,7 @@ class ActivitiesController extends Controller
     // Show the Blade view (if you have one)
     public function index(): View
     {
-        return view('aktivitas/generate-qr'); // You might need to create this view
+        return view('activities/generate-qr'); // You might need to create this view
     }
 
     /**

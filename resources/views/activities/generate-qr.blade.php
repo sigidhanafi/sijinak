@@ -28,7 +28,7 @@
         </button>
 
 
-        <div id="qr-code-container" class="p-6 h-80 w-80 bg-white flex items-center justify-center mt-3 text-center font-bold text-xl">
+        <div id="qr-code-container" class="p-6 h-80 w-80 flex items-center justify-center mt-3 text-center font-bold text-xl">
             This is where the QR code will be placed
         </div>
     </div>
@@ -71,6 +71,18 @@
 
         function clearQRCode(message = 'This is where the QR code will be placed') {
             qrCodeContainer.innerHTML = `<div class="text-center font-bold text-xl">${message}</div>`;
+        }
+
+        // Function to disable input fields during QR generation
+        function toggleInputFields(disabled) {
+            // Disable the activity select dropdown
+            activitySelect.disabled = disabled;
+            
+            // Disable any dynamically created input field
+            const activityNameInput = document.getElementById('activityName');
+            if (activityNameInput) {
+                activityNameInput.disabled = disabled;
+            }
         }
 
         async function fetchAndDisplayQR(activityId) {
@@ -160,6 +172,8 @@
                 return;
             }
 
+            toggleInputFields(true);
+
             // Jika validasi lolos, baru ubah tombol
             const startBtn = document.getElementById('startBtn');
             const stopBtn = document.getElementById('stopBtn');
@@ -184,6 +198,9 @@
 
             stopBtn.style.display = 'none';
             startBtn.style.display = 'inline-block';
+
+            // Re-enable input fields when generation stops
+            toggleInputFields(false);
 
             clearQRCode('QR Generation Stopped. Select activity and click Generate.');
         }

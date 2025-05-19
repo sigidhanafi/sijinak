@@ -11,3 +11,11 @@ Route::resource('/generate-qr', ActivitiesController::class);
 Route::post('/activities/generate', [ActivitiesController::class, 'generate'])->name('activities.generate');
 Route::get('/activities/{id}/qr-svg', [ActivitiesController::class, 'showQrSvg'])->name('activities.qr-svg');
 Route::get('/activities/{id}/qr-data', [ActivitiesController::class, 'getQrData'])->name('activities.qr-data');
+
+// Route::get('/dashboard', function() { /* ... */ })->name('dashboard.index');
+// Route::get('/analytics', function() { /* ... */ })->name('analytics.index');
+// Route::prefix('admin/data')->name('admin.data.')->group(function () {
+//     Route::get('guru', function () { /* ... */ })->name('guru.index');
+//     Route::get('siswa', function () { /* ... */ })->name('siswa.index');
+//     Route::get('wali', function () { /* ... */ })->name('wali.index');
+// });
