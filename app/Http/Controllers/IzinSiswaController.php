@@ -43,6 +43,7 @@ class IzinSiswaController extends Controller
         $pngData = $result->getString();
         $filename = Str::random(40) . '.png'; // biar keliatan ke obfuscate awokoakwokaowk
         $path = 'qr-code/' . $filename;
+        Storage::disk('public')->makeDirectory('qr-code'); 
         Storage::disk('public')->put($path, $pngData);
         $url = Storage::disk('public')->url($path);
         $izin->qr_code = $path;

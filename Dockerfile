@@ -1,6 +1,6 @@
 FROM php:8.3.21
 
-# Install system dependencies termasuk ImageMagick
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     openssl \
     zip \
@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     nodejs \
     npm \
-    libmagickwand-dev --no-install-recommends && rm -rf /var/lib/apt/lists/*
+    --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -17,23 +17,27 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Install Imagick extension
-RUN pecl install imagick && docker-php-ext-enable imagick
+# Cek modul PHP (opsional)
+RUN php -m | grep mbstring
 
+# Set workdir
 WORKDIR /app
 
 # Copy project files
 COPY . /app
 
-# Install dependencies
-RUN composer install
+# Install PHP dependencies
+RUN composer install \
+    && composer require endroid/qr-code
+
+# Install Node.js dependencies
 RUN npm install
 
-# Run Laravel-specific setup: storage link
+# Laravel: Buat symbolic link untuk storage
 RUN php artisan storage:link || true
 
-# Expose port for Laravel server
+# Expose Laravel port
 EXPOSE 8000
 
-# Start Laravel server
+# Jalankan Laravel dev server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
