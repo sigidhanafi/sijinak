@@ -26,7 +26,6 @@
                     <th>Waktu Keluar</th>
                     <th>Dokumen</th>
                     <th>Status</th>
-                    <th>QR Code</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -38,7 +37,7 @@
                         <td>{{ \Carbon\Carbon::parse($izin->waktu_keluar)->format('d-m-Y H:i') }}</td>
                         <td>
                             @if($izin->dokumen)
-                            <a href="{{ asset('storage/' . $izin->dokumen) }}" target="_blank">Lihat Dokumen</a>
+                                <a href="{{ asset('storage/' . $izin->dokumen) }}" target="_blank">Lihat Dokumen</a>
                             @else
                                 Tidak ada
                             @endif
@@ -50,13 +49,6 @@
                                 <span class="badge bg-success">Disetujui</span>
                             @elseif($izin->status === 'rejected')
                                 <span class="badge bg-danger">Ditolak</span>
-                            @endif
-                        </td>
-                        <td>
-                            @if($izin->status === 'approved' && $izin->qr_code)
-                                <img src="data:image/png;base64, {!! $izin->qr_code !!}" alt="QR Code" width="100">
-                            @else
-                                -
                             @endif
                         </td>
                         <td>

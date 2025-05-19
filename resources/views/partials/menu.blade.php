@@ -96,7 +96,7 @@
         </li>
         <li class="menu-item">
           <a href="{{ route('activities.validasi-izin') }}" class="menu-link">
-            <div data-i18n="Validasi Guru Piket">Validasi Izin Siswa</div>
+            <div data-i18n="Validasi Izin Siswa">Validasi Izin Siswa</div>
           </a>
         </li>
       </ul>
