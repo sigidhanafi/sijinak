@@ -121,7 +121,7 @@ class StudentsController extends Controller
         return redirect()->back()
             ->with('edit_success', true)
             ->with('edited_id', $student->id)
-            ->with('message', 'Data siswa berhasil diperbarui.');
+            ->with('message', 'Siswa berhasil diperbarui.');
     }
 
     /**
@@ -130,6 +130,6 @@ class StudentsController extends Controller
     public function destroy(Students $student)
     {
         $student->delete();
-        return redirect()->back();
+        return redirect()->back()->with('delete', 'Siswa berhasil dihapus.');
     }
 }

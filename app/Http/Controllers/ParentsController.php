@@ -156,7 +156,7 @@ class ParentsController extends Controller
         return redirect()->back()
             ->with('edit_success', true)
             ->with('edited_id', $parent->id)
-            ->with('message', 'Data wali siswa berhasil diperbarui.');
+            ->with('message', 'Wali siswa berhasil diperbarui.');
     }
     /**
      * Remove the specified resource from storage.
@@ -164,6 +164,6 @@ class ParentsController extends Controller
     public function destroy(Parents $parent)
     {
         $parent->delete();
-        return redirect()->back();
+        return redirect()->back()->with('delete', 'Wali siswa berhasil dihapus.');
     }
 }

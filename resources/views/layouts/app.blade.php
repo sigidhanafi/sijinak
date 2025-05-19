@@ -82,6 +82,8 @@
         <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
         <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
         <script src="{{ asset('assets/js/config.js') }}"></script>
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
     <body>
         <!-- Layout wrapper -->
@@ -146,7 +148,6 @@
         <script src="{{ asset('assets/js/main.js') }}"></script>
         <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
         <!-- JS DataTables -->
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
         <!-- Page JS -->

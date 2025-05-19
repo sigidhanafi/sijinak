@@ -31,9 +31,8 @@
 >
     Tambah Kelas
 </button>
-@php
-$showCreateOffcanvas = ($errors->any() && session('error_source') === 'create') || session('success');
-@endphp
+@php $showCreateOffcanvas = ($errors->any() && session('error_source') ===
+'create'); @endphp
 <div
     class="offcanvas offcanvas-end {{ $showCreateOffcanvas ? 'show' : '' }}"
     tabindex="-1"
@@ -125,9 +124,8 @@ $showCreateOffcanvas = ($errors->any() && session('error_source') === 'create') 
                             <i class="bx bx-edit"></i>
                         </button>
 
-                        @php $showEditOffcanvas = (session('edit_success') &&
-                        session('edited_id') == $class->id) || ($errors->any()
-                        && session('error_source') === 'update' &&
+                        @php $showEditOffcanvas = ($errors->any() &&
+                        session('error_source') === 'update' &&
                         session('edited_id') == $class->id); @endphp
 
                         <div
@@ -286,7 +284,6 @@ $showCreateOffcanvas = ($errors->any() && session('error_source') === 'create') 
             });
         });
 
-        // auto remove alert on offcanvas
         document.querySelectorAll(".offcanvas .alert").forEach((alert) => {
             setTimeout(() => {
                 alert.remove();
@@ -300,6 +297,17 @@ $showCreateOffcanvas = ($errors->any() && session('error_source') === 'create') 
                     .forEach((alert) => alert.remove());
             });
         });
+
+        @if (session()->has('success') || session()->has('message') || session()->has('delete'))
+        Swal.fire({
+            icon: 'success',
+            title: `<span style="color:#A5DC86">Berhasil!</span>`,
+            html: `<span style="color:#A5DC86">{{ session('success') ?? session('message') ?? session('delete') }}</span>`,
+            timer: 2000,
+            showConfirmButton: false,
+            background: 'transparent'
+        });
+        @endif
     });
 </script>
 @endsection

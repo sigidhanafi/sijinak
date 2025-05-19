@@ -126,7 +126,7 @@ class ClassesController extends Controller
         return redirect()->back()
             ->with('edit_success', true)
             ->with('edited_id', $class->id)
-            ->with('message', 'Data kelas berhasil diperbarui.');
+            ->with('message', 'Kelas berhasil diperbarui.');
     }
 
     /**
@@ -138,6 +138,6 @@ class ClassesController extends Controller
         $class->students()->update(['classId' => null]);
         $class->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('delete', 'Kelas berhasil dihapus.');
     }
 }
