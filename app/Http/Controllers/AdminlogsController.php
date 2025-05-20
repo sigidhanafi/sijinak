@@ -31,14 +31,14 @@ class AdminlogsController extends Controller
         $query = Adminlogs::query();
 
         if (!empty($search)) {
-            $query->where(function($q) use ($search) {
-                $q->where('activity_type', 'LIKE', "%{$search}%")
-                  ->orWhere('created_at', 'LIKE', "%{$search}%")
-                  ->orWhereHas('user', function ($userQuery) use ($search) {
-                      $userQuery->where('name', 'LIKE', "%{$search}%");
-                  });
-            });
-        }
+    $query->where(function($q) use ($search) {
+        $q->where('activity_type', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%')
+          ->orWhere('created_at', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%')
+          ->orWhereHas('user', function ($userQuery) use ($search) {
+              $userQuery->where('name', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%');
+          });
+    });
+}
 
         $logs = $query->paginate(20);
 

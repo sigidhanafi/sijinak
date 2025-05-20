@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
 @section('title', 'Admin Log | Sijinak')
+{{-- TODO: REFACTOR SOME COMPONENT INTO MODULAR PIECE TO AVOID THESE SPAGHETTI ULALA --}}
 
 @section('content')
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 gap-3 mt-3">
+    <div class="d-flex flex-row flex-md-row justify-content-between align-items-center mb-3 gap-3 mt-3">
         <h1 class=" mb-2 mb-md-0">Administrator Activity Log</h1>
 
         <!-- Search -->
@@ -28,38 +29,92 @@
                     <h5 class="mb-0">Filter Logs</h5>
                 </div>
             </div>
-
-
         </div>
 
-        <div class="card-body d-flex flex-column flex-md-row justify-content-start align-items-center gap-3">
+        <div class="card-body d-flex flex-row  flex-sm-row justify-content-start align-items-center gap-3 w-50">
 
-            <div class="btn-group me-3">
+            <div class="btn-group me-3 flex-fill ">
                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Jenis Admin
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
-                    <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
-                    <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
+                    <div class="list-group m-2">
+                        
+
+                        <li>
+                            <label class="list-group-item dropdown-item">
+                                <input class="form-check-input me-1" type="checkbox" value="">
+                                Guru Piket
+                            </label>
+                        </li>
+
+                        
+                        <li>
+                            <label class="list-group-item dropdown-item">
+                                <input class="form-check-input me-1" type="checkbox" value="">
+                                Admin
+                            </label>
+                        </li>
+
+                        
+                        <li>
+                            <label class="list-group-item dropdown-item">
+                                <input class="form-check-input me-1" type="checkbox" value="">
+                                Petugas
+                            </label>
+                        </li>
+                        <div id="floatingInputHelp" class="form-text">Filter berdasarkan jenis admin</div>
+                    </div>
                 </ul>
             </div>
 
-            <div class="btn-group me-3">
+            <div class="btn-group me-3 flex-fill">
                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Jenis Aksi
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
-                    <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
-                    <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
+                    <div class="list-group m-2">
+
+                        <li>
+                            <label class="list-group-item dropdown-item">
+                                <input class="form-check-input me-1" type="checkbox" value="">
+                                <span class="badge bg-label-primary">Log In</span>   
+                            </label>
+                        </li>
+
+                        
+                        <li>
+                            <label class="list-group-item dropdown-item">
+                                <input class="form-check-input me-1" type="checkbox" value="">
+                                <span class="badge bg-label-info">Create QR</span> 
+                            </label>
+                        </li>
+
+                        
+                        <li>
+                            <label class="list-group-item dropdown-item">
+                                <input class="form-check-input me-1" type="checkbox" value="">
+                                
+                                <span class="badge bg-label-warning">Reject Student Request</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label class="list-group-item dropdown-item">
+                                <input class="form-check-input me-1" type="checkbox" value="">
+                                
+                                <span class="badge bg-label-success">Accept Student Request</span>
+                            </label>
+                        </li>
+                        <div id="floatingInputHelp" class="form-text">Filter berdasarkan jenis aksi</div>
+                    </div>
                 </ul>
             </div>
 
 
-            <div class="btn-group me-3">
+            <div class="btn-group me-3 flex-fill">
                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Waktu
@@ -85,18 +140,14 @@
                                     placeholder="End: YYYY-MM-DD" />
                             </div>
                         </div>
+                        <div id="floatingInputHelp" class="form-text">Filter berdasarkan rentang waktu</div>
                     </li>
                 </ul>
             </div>
 
 
             <button type="button" class="btn btn-outline-primary">Apply</button>
-
-
-
         </div>
-
-
     </div>
 
     {{-- admin log table --}}
@@ -133,6 +184,13 @@
                 e.preventDefault();
                 let page = $(this).attr('href').split('page=')[1];
                 fetchData(page, query);
+            });
+
+               $(document).on('click', '#home-button', function() {
+                document.querySelector('#search').value = '';
+                // Also reset the search query and reload results
+                query = '';
+                fetchData(1, '');
             });
 
             $('#search').on('keyup', function() {
