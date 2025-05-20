@@ -97,7 +97,7 @@
                     required
                 />
                 <div id="nameHelp" class="form-text">
-                    Masukkan nama siswa yang sudah terdaftar.
+                    Masukkan nama siswa, pisahkan dengan koma jika lebih dari satu.
                 </div>
             </div>
             <div class="d-flex gap-2 mt-2 mb-3">

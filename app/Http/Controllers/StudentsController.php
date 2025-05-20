@@ -40,8 +40,6 @@ class StudentsController extends Controller
 
         return view('students.index', compact('students', 'classes'));
     }
-
-
     /**
      * Show the form for creating a new resource.
      */
@@ -103,7 +101,6 @@ class StudentsController extends Controller
 
         return redirect()->back()->with('success', 'Siswa berhasil ditambahkan.');
     }
-
     /**
      * Display the specified resource.
      */
@@ -112,9 +109,6 @@ class StudentsController extends Controller
         $student->load(['classes', 'parent']);
         return view('students.show', compact('student'));
     }
-
-
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -122,7 +116,6 @@ class StudentsController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -174,7 +167,6 @@ class StudentsController extends Controller
             ->with('edited_id', $student->id)
             ->with('message', 'Siswa berhasil diperbarui.');
     }
-
     /**
      * Remove the specified resource from storage.
      */

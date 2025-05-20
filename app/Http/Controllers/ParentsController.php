@@ -262,8 +262,6 @@ class ParentsController extends Controller
             ->with('edited_id', $parent->id)
             ->with('message', 'Wali siswa berhasil diperbarui.');
     }
-
-
     /**
      * Remove the specified resource from storage.
      */

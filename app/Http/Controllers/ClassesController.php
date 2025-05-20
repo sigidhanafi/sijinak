@@ -35,7 +35,6 @@ class ClassesController extends Controller
     {
         // 
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -89,7 +88,6 @@ class ClassesController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -128,7 +126,6 @@ class ClassesController extends Controller
             ->with('edited_id', $class->id)
             ->with('message', 'Kelas berhasil diperbarui.');
     }
-
     /**
      * Remove the specified resource from storage.
      */
