@@ -42,7 +42,7 @@
                     @csrf
                     @method('POST')
                     <div class="mb-3">
-                        <label for="studentId" class="form-label">Student ID</label>
+                        <label for="studentId" class="form-label">NISN</label>
                         <input type="number" class="form-control" id="studentId" name="studentId" required>
                     </div>
                     <div class="mb-3">
@@ -62,7 +62,7 @@
                     <th>ID</th>
                     <th>NISN</th>
                     <th>Name</th>
-                    <th>Activity</th>
+                    <th>Activity ID</th>
                     <th>Timestamp</th>
                     <th class="text-center">Action</th>
                 </tr>
@@ -74,7 +74,7 @@
                     <td class="text-center-middle">{{ $activity->student_id }}</td>
                     <td class="text-center-middle">{{ fake()->name() }}</td>
                     <td class="text-center-middle">{{ $activity->activity_id }}</td>
-                    <td class="text-center-middle">{{ $activity->created_at }}</td>
+                    <td class="text-center-middle">{{ $activity->created_at->format('D, d F y H:i:s') }}</td>
                     <td class="text-center align-middle">
                         <div class="d-flex justify-content-center align-items-center gap-1">
                             {{-- DELETE --}}
@@ -92,11 +92,11 @@
                             </button>
                             {{-- EDIT --}}
                             <button class="btn btn-primary btn-sm btn-icon" type="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvasEndEdit" aria-controls="offcanvasEndEdit">
+                                data-bs-target="#offcanvasEndEdit{{ $activity->id }}" aria-controls="offcanvasEndEdit{{ $activity->id }}">
                                 <i class='bx bx-pencil'></i>
                             </button>
-                            <div class="offcanvas offcanvas-end text-start" tabindex="-1" id="offcanvasEndEdit"
-                                aria-labelledby="offcanvasEndLabel">
+                            <div class="offcanvas offcanvas-end text-start" tabindex="-1" id="offcanvasEndEdit{{ $activity->id }}"
+                                aria-labelledby="offcanvasEndLabel{{ $activity->id }}">
                                 <div class="offcanvas-header">
                                     <h5 id="offcanvasEndLabel" class="offcanvas-title">Edit Activity {{ $activity->id
                                         }}</h5>
@@ -112,7 +112,7 @@
                                         @method('PUT')
 
                                         <div class="mb-3">
-                                            <label for="studentId" class="form-label">Student ID</label>
+                                            <label for="studentId" class="form-label">NISN</label>
                                             <input type="number" class="form-control" id="studentId" name="studentId"
                                                 required value="{{ $activity->student_id }}"
                                                 placeholder="{{ $activity->student_id }}"> 
