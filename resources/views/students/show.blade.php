@@ -1,4 +1,4 @@
-@extends('layouts.app') @section('title', 'Detail Siswa') @section('content')
+@extends('layouts.app') @section('title', $student->name . ' | Sijinak') @section('content')
 <div class="text-end mb-3">
     <a href="{{ route('students.index') }}" class="btn btn-outline-primary"
         >Kembali</a
@@ -12,19 +12,19 @@
     </tr>
     <tr>
         <th>Email</th>
-        <td>{{ $student->user->email }}</td>
+        <td><span class="fw-medium">{{ $student->user->email }}</span></td>
     </tr>
     <tr>
         <th>NISN</th>
-        <td>{{ $student->nisn }}</td>
+        <td><span class="fw-medium">{{ $student->nisn }}</span></td>
     </tr>
     <tr>
         <th>Kelas</th>
-        <td>{{ $student->classes->className ?? '-' }}</td>
+        <td><span class="fw-medium">{{ $student->classes->className ?? '-' }}</span></td>
     </tr>
     <tr>
         <th>Nama Orang Tua</th>
-        <td>{{ $student->parent->name ?? '-' }}</td>
+        <td><span class="fw-medium">{{ $student->parent->name ?? '-' }}</span></td>
     </tr>
 </table>
 @endsection

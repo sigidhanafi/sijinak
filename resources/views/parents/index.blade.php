@@ -1,4 +1,4 @@
-@extends('layouts.app') @section('title', 'Home Page | Sijinak')
+@extends('layouts.app') @section('title', 'Parent Page | Sijinak')
 @section('content')
 <h3>Daftar Wali Siswa</h3>
 <div class="row mb-3">
@@ -92,7 +92,7 @@
                     name="student_name"
                     id="student_name"
                     class="form-control"
-                    placeholder="Nama Lengkap"
+                    placeholder="Contoh: John Doe, John Doe, John Doe"
                     value="{{ $showCreateOffcanvas ? old('student_name') : '' }}"
                     required
                 />
@@ -263,7 +263,7 @@
                                             class="form-control"
                                             name="student_name"
                                             id="student_name"
-                                            value="{{ $showEditOffcanvas ? old('student_name') : ($parent->students->first()->name ?? '') }}"
+                                            value="{{ $showEditOffcanvas ? old('student_name') : $parent->students->pluck('name')->implode(', ') }}"
                                             data-initial-value="{{ $parent->students->first()->name ?? '' }}"
                                             required
                                         />

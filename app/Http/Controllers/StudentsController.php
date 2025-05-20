@@ -180,6 +180,9 @@ class StudentsController extends Controller
      */
     public function destroy(Students $student)
     {
+        if ($student->user) {
+            $student->user->delete();
+        }
         $student->delete();
         return redirect()->back()->with('delete', 'Siswa berhasil dihapus.');
     }

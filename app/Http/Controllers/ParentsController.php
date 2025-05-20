@@ -16,7 +16,9 @@ class ParentsController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Parents::with('students');
+        $query = Parents::with(['students' => function ($q) {
+            $q->orderBy('nisn');
+        }]);
 
         if (request()->filled('search')) {
             $search = request('search');
@@ -44,7 +46,6 @@ class ParentsController extends Controller
     {
         //
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -52,10 +53,9 @@ class ParentsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'parent_name'  => 'required|string|max:255',
-            'student_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'student_name' => 'required|string',
+            'email'        => 'required|email',
         ], [
-            'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
         ]);
 
@@ -68,48 +68,97 @@ class ParentsController extends Controller
 
         $validated = $validator->validated();
 
-        $student = Students::whereRaw('LOWER(name) = ?', [strtolower($validated['student_name'])])->first();
+        $studentNames = array_filter(array_map('trim', explode(',', $validated['student_name'])));
 
-        if (!$student) {
+        if (empty($studentNames)) {
             return redirect()->back()
-                ->withErrors(['student_name' => 'Nama siswa tidak ditemukan.'])
+                ->withErrors(['student_name' => 'Nama siswa tidak boleh kosong.'])
                 ->withInput()
                 ->with('error_source', 'create');
         }
 
-        if ($student->parent) {
+        $user = User::where('email', $validated['email'])->first();
+
+        if ($user) {
+            $parent = Parents::where('user_id', $user->id)->first();
+
+            if (!$parent) {
+                return redirect()->back()
+                    ->withErrors(['email' => 'Email ini sudah terdaftar.'])
+                    ->withInput()
+                    ->with('error_source', 'create');
+            }
+
+            if (strtolower($parent->name) !== strtolower($validated['parent_name'])) {
+                return redirect()->back()
+                    ->withErrors(['parent_name' => 'Nama wali tidak sesuai dengan data yang terdaftar.'])
+                    ->withInput()
+                    ->with('error_source', 'create');
+            }
+        } else {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|unique:users,email',
+            ], [
+                'email.unique' => 'Email ini sudah terdaftar.',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput()
+                    ->with('error_source', 'create');
+            }
+
+            $user = User::create([
+                'email'    => $validated['email'],
+                'password' => bcrypt('12345678'),
+                'role'     => 'parent',
+            ]);
+
+            $parent = Parents::create([
+                'name'    => $validated['parent_name'],
+                'user_id' => $user->id,
+            ]);
+        }
+
+        $errors = [];
+        foreach ($studentNames as $name) {
+            $student = Students::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
+
+            if (!$student) {
+                $errors[] = "Siswa '$name' tidak ditemukan.";
+                continue;
+            }
+
+            if ($student->parent) {
+                $errors[] = "Siswa '$name' sudah memiliki wali.";
+                continue;
+            }
+
+            $student->parent()->associate($parent);
+            $student->save();
+        }
+
+        if (!empty($errors)) {
             return redirect()->back()
-                ->withErrors(['student_name' => 'Siswa sudah memiliki orang tua yang terdaftar.'])
+                ->withErrors(['student_name' => implode(' ', $errors)])
                 ->withInput()
                 ->with('error_source', 'create');
         }
 
-        $user = User::create([
-            'email'    => $validated['email'],
-            'password' => bcrypt('12345678'), // Default password
-            'role'     => 'parent',
-        ]);
-
-        $parent = Parents::create([
-            'name'   => $validated['parent_name'],
-            'user_id' => $user->id,
-        ]);
-
-        $student->parent()->associate($parent);
-        $student->save();
-
-        return redirect()->back()->with('success', 'Wali siswa berhasil ditambahkan.');
+        return redirect()->back()->with('success', 'Siswa berhasil ditambahkan ke wali.');
     }
     /**
      * Display the specified resource.
      */
     public function show(Parents $parent)
     {
-        $parent->load('students.classes');  // only load students
+        $parent->load(['students' => function ($q) {
+            $q->orderBy('nisn');
+        }, 'students.classes']);
+
         return view('parents.show', compact('parent'));
     }
-
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -124,7 +173,7 @@ class ParentsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'parent_name'  => 'required|string|max:255',
-            'student_name' => 'required|string|max:255',
+            'student_name' => 'required|string', // bisa berupa "Siswa1, Siswa2, Siswa3"
             'email'        => [
                 'required',
                 'email',
@@ -145,40 +194,67 @@ class ParentsController extends Controller
 
         $validated = $validator->validated();
 
-        $student = Students::whereRaw('LOWER(name) = ?', [strtolower($validated['student_name'])])->first();
+        $studentNames = array_filter(array_map('trim', explode(',', $validated['student_name'])));
 
-        if (!$student) {
+        if (empty($studentNames)) {
             return redirect()->back()
+                ->withErrors(['student_name' => 'Nama siswa tidak boleh kosong.'])
                 ->withInput()
                 ->with('error_source', 'update')
-                ->with('edited_id', $parent->id)
-                ->withErrors(['student_name' => 'Nama siswa tidak ditemukan.']);
+                ->with('edited_id', $parent->id);
         }
 
-        if ($student->parent && $student->parent->id !== $parent->id) {
+        $errors = [];
+        $validStudents = [];
+
+        foreach ($studentNames as $name) {
+            $student = Students::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
+
+            if (!$student) {
+                $errors[] = "Siswa '$name' tidak ditemukan.";
+                continue;
+            }
+
+            if ($student->parent && $student->parent->id !== $parent->id) {
+                $errors[] = "Siswa '$name' sudah memiliki wali yang terdaftar.";
+                continue;
+            }
+
+            $validStudents[] = $student;
+        }
+
+        if (!empty($errors)) {
             return redirect()->back()
+                ->withErrors(['student_name' => implode(' ', $errors)])
                 ->withInput()
                 ->with('error_source', 'update')
-                ->with('edited_id', $parent->id)
-                ->withErrors(['student_name' => 'Siswa ini sudah memiliki wali yang terdaftar.']);
+                ->with('edited_id', $parent->id);
         }
 
         $parent->name = $validated['parent_name'];
         $parent->save();
 
         if ($parent->user) {
-            $parent->user->email = $validated['email'];
-            $parent->user->save();
+            $parent->user->update(['email' => $validated['email']]);
         }
 
-        if (!$parent->students->contains($student->id)) {
-            foreach ($parent->students as $existingStudent) {
-                $existingStudent->parent()->dissociate();
-                $existingStudent->save();
-            }
+        $oldStudentNames = $parent->students->pluck('name')->map(fn($n) => strtolower($n))->toArray();
 
-            $student->parent()->associate($parent);
-            $student->save();
+
+        $newStudentNames = array_map('strtolower', $studentNames);
+
+        foreach ($parent->students as $oldStudent) {
+            if (!in_array(strtolower($oldStudent->name), $newStudentNames)) {
+                $oldStudent->parent()->dissociate();
+                $oldStudent->save();
+            }
+        }
+
+        foreach ($validStudents as $student) {
+            if (!in_array(strtolower($student->name), $oldStudentNames)) {
+                $student->parent()->associate($parent);
+                $student->save();
+            }
         }
 
         return redirect()->back()
@@ -186,11 +262,16 @@ class ParentsController extends Controller
             ->with('edited_id', $parent->id)
             ->with('message', 'Wali siswa berhasil diperbarui.');
     }
+
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Parents $parent)
     {
+        if ($parent->user) {
+            $parent->user->delete();
+        }
         $parent->delete();
         return redirect()->back()->with('delete', 'Wali siswa berhasil dihapus.');
     }
