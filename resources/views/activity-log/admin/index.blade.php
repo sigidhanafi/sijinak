@@ -91,9 +91,6 @@
                                 <i class="bx bx-show"></i>
                             </button>
                             {{-- EDIT --}}
-                            <button class="btn btn-primary btn-sm btn-icon" title="Edit">
-                                <i class='bx bx-pencil'></i>
-                            </button>
                             <button class="btn btn-primary btn-sm btn-icon" type="button" data-bs-toggle="offcanvas"
                                 data-bs-target="#offcanvasEndEdit" aria-controls="offcanvasEndEdit">
                                 <i class='bx bx-pencil'></i>
