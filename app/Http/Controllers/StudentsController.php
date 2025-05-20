@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Classes;
 use App\Models\Students;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
@@ -56,19 +57,35 @@ class StudentsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'nisn' => 'required|string|unique:students,nisn',
+            'email' => 'required|email|unique:users,email',
             'classId' => 'required|exists:classes,id',
         ], [
             'nisn.unique' => 'NISN ini sudah terdaftar.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'email.email' => 'Format email tidak valid.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with('error_source', 'create'); // ini kunci untuk tahu bahwa ini error dari "Tambah"
+                ->with('error_source', 'create');
         }
 
-        Students::create($validator->validated());
+        $validated = $validator->validated();
+
+        $user = User::create([
+            'email'    => $validated['email'],
+            'password' => bcrypt('12345678'), // Default password
+            'role'     => 'student',
+        ]);
+
+        Students::create([
+            'name'     => $validated['name'],
+            'nisn'     => $validated['nisn'],
+            'classId'  => $validated['classId'],
+            'user_id'  => $user->id,
+        ]);
 
         return redirect()->back()->with('success', 'Siswa berhasil ditambahkan.');
     }
@@ -103,9 +120,16 @@ class StudentsController extends Controller
                 'string',
                 Rule::unique('students', 'nisn')->ignore($student->id),
             ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($student->user_id),
+            ],
             'classId' => 'required|exists:classes,id',
         ], [
             'nisn.unique' => 'NISN ini sudah terdaftar.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'email.email' => 'Format email tidak valid.',
         ]);
 
         if ($validator->fails()) {
@@ -116,7 +140,19 @@ class StudentsController extends Controller
                 ->with('edited_id', $student->id);
         }
 
-        $student->update($validator->validated());
+        $validated = $validator->validated();
+
+        $student->update([
+            'name'     => $validated['name'],
+            'nisn'     => $validated['nisn'],
+            'classId'  => $validated['classId'],
+        ]);
+
+        if ($student->user) {
+            $student->user->update([
+                'email' => $validated['email'],
+            ]);
+        }
 
         return redirect()->back()
             ->with('edit_success', true)

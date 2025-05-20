@@ -55,12 +55,13 @@
         <form action="{{ route('classes.store') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="className" class="form-label">Nama</label>
+                <label for="className" class="form-label">Kelas</label>
                 <input
                     type="text"
                     name="className"
-                    class="form-control"
-                    placeholder="Kelas"
+                    class="form-control"    
+                    placeholder="Nama Kelas"
+                    value="{{ $showCreateOffcanvas ? old('className') : '' }}"
                     required
                 />
                 <div id="nameHelp" class="form-text">
@@ -78,11 +79,7 @@
                 </button>
             </div>
         </form>
-        @if (session('success'))
-        <div class="alert alert-success" role="alert">
-            {{ session('success') }}
-        </div>
-        @endif @if ($errors->any())
+        @if ($errors->any())
         <div class="alert alert-danger">
             @foreach ($errors->all() as $error) {{ $error }} @endforeach
         </div>
@@ -166,7 +163,7 @@
                                             class="form-control"
                                             id="className"
                                             name="className"
-                                            value="{{ $class->className }}"
+                                            value="{{ $showEditOffcanvas ? old('className') : $class->className }}"
                                             data-initial-value="{{ $class->className }}"
                                             required
                                         />
@@ -187,11 +184,7 @@
                                         </button>
                                     </div>
                                 </form>
-                                @if (session('message'))
-                                <div class="alert alert-success" role="alert">
-                                    {{ session('message') }}
-                                </div>
-                                @endif @if ($errors->any())
+                                @if ($errors->any())
                                 <div class="alert alert-danger">
                                     @foreach ($errors->all() as $error) {{
                                     $error }} @endforeach

@@ -11,6 +11,10 @@
         <td><span class="fw-medium">{{ $student->name }}</span></td>
     </tr>
     <tr>
+        <th>Email</th>
+        <td>{{ $student->user->email }}</td>
+    </tr>
+    <tr>
         <th>NISN</th>
         <td>{{ $student->nisn }}</td>
     </tr>

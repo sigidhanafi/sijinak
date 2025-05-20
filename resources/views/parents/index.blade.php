@@ -64,10 +64,25 @@
                     id="parent_name"
                     class="form-control"
                     placeholder="Nama Lengkap"
+                    value="{{ $showCreateOffcanvas ? old('parent_name') : '' }}"
                     required
                 />
                 <div id="nameHelp" class="form-text">
                     Masukkan nama wali siswa.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                    type="text"
+                    name="email"
+                    class="form-control"
+                    placeholder="Email"
+                    value="{{ $showCreateOffcanvas ? old('email') : '' }}"
+                    required
+                />
+                <div id="nameHelp" class="form-text">
+                    Masukkan email wali siswa.
                 </div>
             </div>
             <div class="mb-3">
@@ -78,6 +93,7 @@
                     id="student_name"
                     class="form-control"
                     placeholder="Nama Lengkap"
+                    value="{{ $showCreateOffcanvas ? old('student_name') : '' }}"
                     required
                 />
                 <div id="nameHelp" class="form-text">
@@ -97,11 +113,7 @@
                 </button>
             </div>
         </form>
-        @if (session('success'))
-        <div class="alert alert-success" role="alert">
-            {{ session('success') }}
-        </div>
-        @endif @if ($errors->any())
+        @if ($errors->any())
         <div class="alert alert-danger">
             @foreach ($errors->all() as $error) {{ $error }} @endforeach
         </div>
@@ -221,8 +233,22 @@
                                             class="form-control"
                                             name="parent_name"
                                             id="parent_name"
-                                            value="{{ $parent->name }}"
+                                            value="{{ $showEditOffcanvas ? old('parent_name') : $parent->name }}"
                                             data-initial-value="{{ $parent->name }}"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label"
+                                            >Email</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="email"
+                                            id="email"
+                                            value="{{ $showEditOffcanvas ? old('email') : $parent->user->email }}"
+                                            data-initial-value="{{ $parent->user->email }}"
                                             required
                                         />
                                     </div>
@@ -237,7 +263,7 @@
                                             class="form-control"
                                             name="student_name"
                                             id="student_name"
-                                            value="{{ $parent->students->first()->name ?? '' }}"
+                                            value="{{ $showEditOffcanvas ? old('student_name') : ($parent->students->first()->name ?? '') }}"
                                             data-initial-value="{{ $parent->students->first()->name ?? '' }}"
                                             required
                                         />
@@ -259,11 +285,7 @@
                                         </button>
                                     </div>
                                 </form>
-                                @if (session('message'))
-                                <div class="alert alert-success" role="alert">
-                                    {{ session('message') }}
-                                </div>
-                                @endif @if($errors->any())
+                                @if($errors->any())
                                 <div
                                     id="alert-message"
                                     class="alert alert-danger"

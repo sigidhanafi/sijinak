@@ -11,6 +11,10 @@
         <td><span class="fw-medium">{{ $parent->name }}</span></td>
     </tr>
     <tr>
+        <th>Email</th>
+        <td>{{ $parent->user->email }}</td>
+    </tr>
+    <tr>
         <th>Nama Siswa</th>
         <td>
             @if($parent->students->isNotEmpty()) {{

@@ -5,13 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Parents extends Model
 {
     /** @use HasFactory<\Database\Factories\ParentsFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'phone', 'parentId'];
+    protected $fillable = ['user_id', 'name', 'phone', 'parentId'];
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 
     public function students(): HasMany
     {

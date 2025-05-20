@@ -66,10 +66,25 @@
                     name="name"
                     class="form-control"
                     placeholder="Nama Lengkap"
+                    value="{{ $showCreateOffcanvas ? old('name') : '' }}"
                     required
                 />
                 <div id="nameHelp" class="form-text">
                     Masukkan nama siswa.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                    type="text"
+                    name="email"
+                    class="form-control"
+                    placeholder="Email"
+                    value="{{ $showCreateOffcanvas ? old('email') : '' }}"
+                    required
+                />
+                <div id="nameHelp" class="form-text">
+                    Masukkan email siswa.
                 </div>
             </div>
             <div class="mb-3">
@@ -79,6 +94,7 @@
                     name="nisn"
                     class="form-control"
                     placeholder="Nomor Induk Siswa Nasional"
+                    value="{{ $showCreateOffcanvas ? old('nisn') : '' }}"
                     required
                 />
                 <div id="nameHelp" class="form-text">
@@ -88,10 +104,14 @@
             <div class="mb-3">
                 <label for="classId" class="form-label">Kelas</label>
                 <select name="classId" class="form-select" required>
-                    <option value="" disabled selected>Kelas</option>
+                    <option value="" disabled
+                        {{ $showCreateOffcanvas && old('classId') ? '' : 'selected' }}>
+                        Kelas
+                    </option>
                     <option value="{{ $class->id }}"
-                        >{{ $class->className }}</option
-                    >
+                        {{ $showCreateOffcanvas && old('classId') == $class->id ? 'selected' : '' }}>
+                        {{ $class->className }}
+                    </option>
                 </select>
                 <div id="nameHelp" class="form-text">
                     Pilih kelas siswa.
@@ -110,11 +130,7 @@
                 </button>
             </div>
         </form>
-        @if (session('success'))
-        <div class="alert alert-success" role="alert">
-            {{ session('success') }}
-        </div>
-        @endif @if ($errors->any())
+        @if ($errors->any())
         <div class="alert alert-danger">
             @foreach ($errors->all() as $error) {{ $error }} @endforeach
         </div>
@@ -194,8 +210,22 @@
                                             class="form-control"
                                             name="name"
                                             id="name"
-                                            value="{{ $student->name }}"
+                                            value="{{ $showEditOffcanvas ? old('name') : $student->name }}"
                                             data-initial-value="{{ $student->name }}"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label"
+                                            >Email</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="email"
+                                            id="email"
+                                            value="{{ $showEditOffcanvas ? old('email') : $student->user->email }}"
+                                            data-initial-value="{{ $student->user->email }}"
                                             required
                                         />
                                     </div>
@@ -208,7 +238,7 @@
                                             class="form-control"
                                             name="nisn"
                                             id="nisn"
-                                            value="{{ $student->nisn }}"
+                                            value="{{ $showEditOffcanvas ? old('nisn') : $student->nisn }}"
                                             data-initial-value="{{ $student->nisn }}"
                                             required
                                         />
@@ -219,28 +249,21 @@
                                             class="form-label"
                                             >Pilih Kelas</label
                                         >
-                                        <select
-                                            name="classId"
-                                            class="form-select"
-                                            value="{{ $student->classId }}"
-                                            data-initial-value="{{ $student->classId }}"
-                                            required
-                                        >
-                                            <option value="" disabled selected
-                                                >Kelas</option
-                                            >
-                                            @foreach ($classes as $class) @php
-                                            $selected = $student->classId ==
-                                            $class->id ? 'selected' : '';
-                                            @endphp
-                                            <option
-                                                value="{{ $class->id }}"
-                                                {{
-                                                $selected
-                                                }}
-                                            >
-                                                {{ $class->className }}
+                                        <select name="classId" class="form-select" required>
+                                            <option value="" disabled
+                                                {{ $showEditOffcanvas
+                                                    ? (old('classId') ? '' : 'selected')
+                                                    : ($student->classId ? '' : 'selected') }}>
+                                                Pilih Kelas
                                             </option>
+
+                                            @foreach ($classes as $class)
+                                                <option value="{{ $class->id }}"
+                                                    {{ $showEditOffcanvas
+                                                        ? (old('classId') == $class->id ? 'selected' : '')
+                                                        : ($student->classId == $class->id ? 'selected' : '') }}>
+                                                    {{ $class->className }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -260,11 +283,7 @@
                                         </button>
                                     </div>
                                 </form>
-                                @if (session('message'))
-                                <div class="alert alert-success" role="alert">
-                                    {{ session('message') }}
-                                </div>
-                                @endif @if($errors->any())
+                                @if($errors->any())
                                 <div
                                     id="alert-message"
                                     class="alert alert-danger"

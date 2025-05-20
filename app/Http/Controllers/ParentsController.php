@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Parents;
 use App\Models\Students;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ParentsController extends Controller
 {
@@ -51,6 +53,10 @@ class ParentsController extends Controller
         $validator = Validator::make($request->all(), [
             'parent_name'  => 'required|string|max:255',
             'student_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+        ], [
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'email.email' => 'Format email tidak valid.',
         ]);
 
         if ($validator->fails()) {
@@ -60,7 +66,9 @@ class ParentsController extends Controller
                 ->with('error_source', 'create');
         }
 
-        $student = Students::whereRaw('LOWER(name) = ?', [strtolower($validator->validated()['student_name'])])->first();
+        $validated = $validator->validated();
+
+        $student = Students::whereRaw('LOWER(name) = ?', [strtolower($validated['student_name'])])->first();
 
         if (!$student) {
             return redirect()->back()
@@ -76,8 +84,15 @@ class ParentsController extends Controller
                 ->with('error_source', 'create');
         }
 
+        $user = User::create([
+            'email'    => $validated['email'],
+            'password' => bcrypt('12345678'), // Default password
+            'role'     => 'parent',
+        ]);
+
         $parent = Parents::create([
-            'name' => $validator->validated()['parent_name'],
+            'name'   => $validated['parent_name'],
+            'user_id' => $user->id,
         ]);
 
         $student->parent()->associate($parent);
@@ -108,8 +123,16 @@ class ParentsController extends Controller
     public function update(Request $request, Parents $parent)
     {
         $validator = Validator::make($request->all(), [
-            'parent_name' => 'required|string|max:255',
+            'parent_name'  => 'required|string|max:255',
             'student_name' => 'required|string|max:255',
+            'email'        => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($parent->user_id),
+            ],
+        ], [
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'email.email' => 'Format email tidak valid.',
         ]);
 
         if ($validator->fails()) {
@@ -142,6 +165,11 @@ class ParentsController extends Controller
 
         $parent->name = $validated['parent_name'];
         $parent->save();
+
+        if ($parent->user) {
+            $parent->user->email = $validated['email'];
+            $parent->user->save();
+        }
 
         if (!$parent->students->contains($student->id)) {
             foreach ($parent->students as $existingStudent) {

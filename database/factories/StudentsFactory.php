@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Parents;
+use App\Models\Students;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +22,7 @@ class StudentsFactory extends Factory
         $parentId = Parents::factory()->create()->id;
 
         return [
+            'user_id' => User::factory()->student(),
             'name' => $this->faker->name(),
             'nisn' => $this->faker->unique()->randomNumber(5, true),
             'classId' => $this->faker->numberBetween(1, 6),
