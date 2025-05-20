@@ -29,7 +29,7 @@ class IzinSiswaController extends Controller
         $izin->status = 'approved';
 
         // Prepare QR data
-        $plainData = "Izin ID: {$izin->id}\nSiswa: tes\nWaktu Keluar: {$izin->waktu_keluar}";
+        $plainData = "{$izin->id}{$izin->waktu_keluar}";
 
         // Use Vernam cipher with current minute as key
         $minuteKey = date('i'); // current minute, e.g. "07"
