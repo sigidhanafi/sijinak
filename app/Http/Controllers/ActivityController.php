@@ -86,13 +86,9 @@ class ActivityController extends Controller
      * Show the form for editing the specified resource.
      * TO DO: Devin
      */
-    public function edit(Activity $activity): View
+    public function edit(Activity $activity)
     {
-        //show the form to edit activity
-        //get all activities
-        $activities = Activity::all();
-        //render view with activities
-        return view('activity-log.admin.edit', compact('activities', 'activity'));
+        // 
     }
 
     /**
@@ -101,43 +97,20 @@ class ActivityController extends Controller
      */
     public function update(Request $request, Activity $activity): RedirectResponse
     {
-        // validate
+        // Validate the data
         $validated = $request->validate([
-            'student_id' => 'required|integer',
-            'activity_id' => 'required|string',
-            'file' => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:20480'
+            'studentId' => 'required|integer',
+            'activityId' => 'required|integer',
         ]);
-        //check if file is uploaded
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            //add origin file name on local storage
-            $originalName = $file->getClientOriginalName();
-            //clear the name of file so it won't be duplicated
-            $filename = pathinfo($originalName, PATHINFO_FILENAME);
-            $extension = $file->getClientOriginalExtension();
-            $safeName = \Illuminate\Support\Str::slug($filename)
-                . '_' . time()
-                . '.' . $extension;
-            //delete old file
-            Storage::delete('public/activities/' . $activity->file);
-            //upload new file
-            $file = $request->file('file');
-            $file->storeAs('public/activities', $safeName);
-            //update activity with new file
-            $activity->update([
-                'student_id' => $validated['student_id'],
-                'activity_id' => $validated['activity_id'],
-                'file' => $safeName,
-            ]);
-        } else {
-            //update activity without new file
-            $activity->update([
-                'student_id' => $validated['student_id'],
-                'activity_id' => $validated['activity_id'],
-            ]);
-        }
+
+        // Update the current activity
+        $activity->update([
+            'student_id' => $validated['studentId'],
+            'activity_id' => $validated['activityId'],
+        ]);
+
         Alert::success('Success', 'Data successfully updated!');
-        return redirect()->route('activities.index')->with(['success', 'Data Berhasil Diubah!']);
+        return redirect()->back();
     }
 
     /**
