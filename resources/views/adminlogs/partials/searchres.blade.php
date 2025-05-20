@@ -1,4 +1,4 @@
-<table class="table table-hover">
+<table class="table table-hover table-striped">
     <thead>
         <tr>
             <th>No.</th>
@@ -33,7 +33,7 @@
 @endphp
 
 
-<nav aria-label="Page-navigation">
+<nav aria-label="Page-navigation" class="mt-2 ">
     <ul class="pagination pagination-lg justify-content-center">
 
         {{-- First Page --}}
