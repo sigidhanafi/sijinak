@@ -54,29 +54,43 @@ class StudentsController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'nisn' => 'required|string|unique:students,nisn',
+        $emailValidator = Validator::make($request->only('email'), [
             'email' => 'required|email|unique:users,email',
-            'classId' => 'required|exists:classes,id',
         ], [
-            'nisn.unique' => 'NISN ini sudah terdaftar.',
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
         ]);
 
-        if ($validator->fails()) {
+        if ($emailValidator->fails()) {
             return redirect()->back()
-                ->withErrors($validator)
+                ->withErrors($emailValidator)
                 ->withInput()
                 ->with('error_source', 'create');
         }
 
-        $validated = $validator->validated();
+        $otherValidator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'nisn' => 'required|string|unique:students,nisn',
+            'classId' => 'required|exists:classes,id',
+        ], [
+            'nisn.unique' => 'NISN ini sudah terdaftar.',
+        ]);
+
+        if ($otherValidator->fails()) {
+            return redirect()->back()
+                ->withErrors($otherValidator)
+                ->withInput()
+                ->with('error_source', 'create');
+        }
+
+        $validated = array_merge(
+            $emailValidator->validated(),
+            $otherValidator->validated()
+        );
 
         $user = User::create([
             'email'    => $validated['email'],
-            'password' => bcrypt('12345678'), // Default password
+            'password' => bcrypt('12345678'),
             'role'     => 'student',
         ]);
 
@@ -89,6 +103,7 @@ class StudentsController extends Controller
 
         return redirect()->back()->with('success', 'Siswa berhasil ditambahkan.');
     }
+
     /**
      * Display the specified resource.
      */
@@ -115,21 +130,21 @@ class StudentsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'nisn' => [
-                'required',
-                'string',
-                Rule::unique('students', 'nisn')->ignore($student->id),
-            ],
             'email' => [
                 'required',
                 'email',
                 Rule::unique('users', 'email')->ignore($student->user_id),
             ],
+            'nisn' => [
+                'required',
+                'string',
+                Rule::unique('students', 'nisn')->ignore($student->id),
+            ],
             'classId' => 'required|exists:classes,id',
         ], [
-            'nisn.unique' => 'NISN ini sudah terdaftar.',
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
+            'nisn.unique' => 'NISN ini sudah terdaftar.',
         ]);
 
         if ($validator->fails()) {
