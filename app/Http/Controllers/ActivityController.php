@@ -63,7 +63,14 @@ class ActivityController extends Controller
             'activityId' => 'required|integer',
         ]);
 
-        return redirect('/activities');
+        Activity::create([
+            'student_id' => $validated['studentId'],
+            'activity_id' => $validated['activityId'],
+        ]);
+
+        Alert::success('Success', 'Data successfully added!');
+
+        return redirect()->back();
     }
 
     /**
@@ -98,10 +105,10 @@ class ActivityController extends Controller
         $validated = $request->validate([
             'student_id' => 'required|integer',
             'activity_id' => 'required|string',
-            'file' => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:20480' 
+            'file' => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:20480'
         ]);
         //check if file is uploaded
-        if ($request->hasFile('file')){
+        if ($request->hasFile('file')) {
             $file = $request->file('file');
             //add origin file name on local storage
             $originalName = $file->getClientOriginalName();
@@ -109,8 +116,8 @@ class ActivityController extends Controller
             $filename = pathinfo($originalName, PATHINFO_FILENAME);
             $extension = $file->getClientOriginalExtension();
             $safeName = \Illuminate\Support\Str::slug($filename)
-                    . '_' . time()
-                    . '.' . $extension;
+                . '_' . time()
+                . '.' . $extension;
             //delete old file
             Storage::delete('public/activities/' . $activity->file);
             //upload new file
@@ -124,12 +131,12 @@ class ActivityController extends Controller
             ]);
         } else {
             //update activity without new file
-        $activity->update([
-            'student_id' => $validated['student_id'],
-            'activity_id' => $validated['activity_id'],
-        ]);
+            $activity->update([
+                'student_id' => $validated['student_id'],
+                'activity_id' => $validated['activity_id'],
+            ]);
         }
-        Alert::success('Berhasil','Data Berhasil Diubah!');
+        Alert::success('Success', 'Data successfully updated!');
         return redirect()->route('activities.index')->with(['success', 'Data Berhasil Diubah!']);
     }
 
@@ -141,7 +148,8 @@ class ActivityController extends Controller
     {
         $activity = Activity::findOrFail($id);
         $activity->delete();
-        return redirect()->route('activities.index')->with('success', 'Activity berhasil dihapus.');
+
+        Alert::success('Success', 'Activity successfully deleted!');
+        return redirect()->route('activities.index');
     }
 }
-
