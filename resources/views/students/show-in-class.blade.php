@@ -1,7 +1,7 @@
 @extends('layouts.app') @section('title', $student->name . ' | Sijinak')
 @section('content')
 <div class="text-end mb-3">
-    <a href="{{ route('students.index') }}" class="btn btn-outline-primary"
+    <a href="{{ route('classes.show', $class->id) }}" class="btn btn-outline-primary"
         >Kembali</a
     >
 </div>

@@ -109,6 +109,12 @@ class StudentsController extends Controller
         $student->load(['classes', 'parent']);
         return view('students.show', compact('student'));
     }
+
+    public function showInClass(Classes $class, Students $student)
+    {
+        return view('students.show-in-class', compact('class', 'student'));
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

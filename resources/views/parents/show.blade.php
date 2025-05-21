@@ -1,7 +1,7 @@
 @extends('layouts.app') @section('title', $parent->name . ' | Sijinak')
 @section('content')
 <div class="text-end mb-3">
-    <a href="{{ url()->previous() }}" class="btn btn-outline-primary"
+    <a href="{{ route('parents.index') }}" class="btn btn-outline-primary"
         >Kembali</a
     >
 </div>

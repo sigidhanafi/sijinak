@@ -12,5 +12,7 @@ Route::get('/', function () {
 Route::resource('students', StudentsController::class);
 
 Route::resource('classes', ClassesController::class);
+Route::get('/classes/{class}/students/{student}', [StudentsController::class, 'showInClass'])->name('classes.students.show');
+
 
 Route::resource('parents', ParentsController::class);

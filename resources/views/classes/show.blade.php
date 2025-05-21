@@ -137,7 +137,7 @@
 </div>
 {{-- Tabel Siswa --}}
 <div id="student-table">
-    @include('students.table', ['students' => $students])
+    @include('classes.partials.student-table', ['students' => $students])
 </div>
 {{-- Modal Konfirmasi Hapus --}}
 <div
@@ -219,7 +219,7 @@
         });
         @endif
 
-                // AJAX search
+        // AJAX search
         $('#search').on('keyup', function () {
             let query = $(this).val();
             let paginate = $('#paginate').val() ?? 50;

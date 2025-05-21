@@ -86,7 +86,7 @@
 </div>
 {{-- Tabel Kelas --}}
 <div id="class-table">
-    @include('classes.table', ['classes' => $classes])
+    @include('classes.partials.class-table', ['classes' => $classes])
 </div>
 {{-- Modal Konfirmasi Hapus --}}
 <div
