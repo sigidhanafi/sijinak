@@ -170,7 +170,7 @@
         // AJAX search
         $('#search').on('keyup', function () {
             let query = $(this).val();
-            let paginate = $('#paginate').val() ?? 25;
+            let paginate = $('#paginate').val() ?? 50;
 
             $.ajax({
                 url: "{{ route('classes.index') }}",
