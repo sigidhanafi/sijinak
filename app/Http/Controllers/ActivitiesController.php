@@ -8,8 +8,10 @@ use App\Models\Users;
 use Illuminate\View\View;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\ActivityQrCache;
+use Illuminate\Http\JsonResponse;
 
 class ActivitiesController extends Controller
 {
@@ -25,7 +27,7 @@ class ActivitiesController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generate(Request $request): \Illuminate\Http\JsonResponse
+    public function generate(Request $request): JsonResponse
     {
         // Get the currently logged-in user's ID.  If no user is logged in,
         // use the default teacher for testing purposes.
@@ -64,27 +66,27 @@ class ActivitiesController extends Controller
      */
     public function showQrSvg(int $id): Response
     {
-        $activity = Activities::find($id);
+        $cache = \App\Models\ActivityQrCache::where('activity_id', $id)->first();
 
-        if (!$activity) {
-            return response('Activity not found', 404);
+        if (!$cache) {
+            return response('QR code cache not found', 404);
         }
 
         $svg = QrCode::format('svg')
             ->size(300)
-            ->generate($activity->qrCode);
+            ->generate($cache->qr_code);
 
         return response($svg, Response::HTTP_OK)
             ->header('Content-Type', 'image/svg+xml');
     }
 
-      /**
+    /**
      * Get the QR code data (JSON) for a given activity ID.
      *
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getQrData(int $id): \Illuminate\Http\JsonResponse
+    public function getQrData(int $id): JsonResponse
     {
         $activity = Activities::find($id);
 
@@ -97,6 +99,28 @@ class ActivitiesController extends Controller
             'activityName' => $activity->activityName,
             'qrCode' => $activity->qrCode,
             //'createdBy' => $activity->createdBy, //  Don't expose user ID unless needed.
+        ]);
+    }
+    public function refreshQrCode(int $activityId): JsonResponse
+    {
+        $activity = Activities::find($activityId);
+
+        if (!$activity) {
+            return response()->json(['error' => 'Activity not found'], 404);
+        }
+
+        $newQr = (string) Str::uuid();
+
+        $cache = ActivityQrCache::create([
+            'activity_id' => $activityId,
+            'qr_code' => $newQr,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'activityId' => $activityId,
+            'qrCode' => $newQr,
+            'cacheId' => $cache->id,
         ]);
     }
 }
