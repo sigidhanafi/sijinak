@@ -9,15 +9,13 @@
             action="{{ route('classes.index') }}"
         >
             <input
+                id="search"
                 class="form-control"
                 type="text"
                 name="search"
                 placeholder="Cari Kelas"
                 value="{{ request('search') }}"
             />
-            <button class="btn btn-outline-primary" type="submit">
-                Search
-            </button>
         </form>
     </div>
 </div>
@@ -87,136 +85,8 @@
     </div>
 </div>
 {{-- Tabel Kelas --}}
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Kelas</th>
-                <th>Wali Kelas</th>
-                <th>Jumlah Siswa</th>
-                <th>Ubah Data</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($classes as $class)
-            <tr>
-                <td>
-                    <a
-                        href="{{ route('classes.show', $class->id) }}"
-                        class="fw-medium"
-                        >{{ $class->className }}</a
-                    >
-                </td>
-                <td>-</td>
-                <td>{{ $class->totalStudents($class->id) }}</td>
-                <td class="" style="">
-                    <div class="d-inline-block text-nowrap">
-                        <button
-                            class="btn btn-sm btn-icon btn-edit"
-                            type="button"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasUbahKelas-{{ $class->id }}"
-                            aria-controls="offcanvasUbahKelas-{{ $class->id }}"
-                        >
-                            <i class="bx bx-edit"></i>
-                        </button>
-                        @php $showEditOffcanvas = ($errors->any() &&
-                        session('error_source') === 'update' &&
-                        session('edited_id') == $class->id); @endphp
-                        <div
-                            class="offcanvas offcanvas-end {{ $showEditOffcanvas ? 'show' : '' }}"
-                            id="offcanvasUbahKelas-{{ $class->id }}"
-                            tabindex="-1"
-                            aria-labelledby="offcanvasUbahKelasLabel-{{ $class->id }}"
-                            style="{{ $showEditOffcanvas ? 'visibility: visible;' : '' }}"
-                        >
-                            <div class="offcanvas-header">
-                                <h3
-                                    class="offcanvas-title"
-                                    id="offcanvasUbahLabel"
-                                >
-                                    Ubah Kelas
-                                </h3>
-                                <button
-                                    type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="offcanvas"
-                                    aria-label="Close"
-                                ></button>
-                            </div>
-                            <div class="offcanvas-body">
-                                <form
-                                    action="{{ route('classes.update', $class->id) }}"
-                                    method="POST"
-                                >
-                                    @csrf @method('PUT')
-                                    <div class="mb-3">
-                                        <label
-                                            for="className"
-                                            class="form-label"
-                                            >Kelas</label
-                                        >
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="className"
-                                            name="className"
-                                            value="{{ $showEditOffcanvas ? old('className') : $class->className }}"
-                                            data-initial-value="{{ $class->className }}"
-                                            required
-                                        />
-                                    </div>
-                                    <div class="d-flex gap-2 mt-2 mb-3">
-                                        <button
-                                            type="submit"
-                                            class="btn btn-primary mt-2"
-                                        >
-                                            Simpan
-                                        </button>
-                                        <button
-                                            type="reset"
-                                            class="btn btn-label-primary mt-2"
-                                            data-bs-dismiss="offcanvas"
-                                        >
-                                            Batal
-                                        </button>
-                                    </div>
-                                </form>
-                                @if($showEditOffcanvas)
-                                <div
-                                    id="alert-message-{{ $class->id }}"
-                                    class="alert alert-danger"
-                                >
-                                    {{ $errors->first() }}
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                        <form
-                            action="{{ route('classes.destroy', $class->id) }}"
-                            method="POST"
-                            class="d-inline-block"
-                        >
-                            @csrf @method('DELETE')
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-icon btn-delete"
-                                data-id="{{ $class->id }}"
-                                data-name="{{ $class->className }}"
-                            >
-                                <i class="bx bx-trash me-1"></i>
-                            </button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="4" class="text-center">Tidak ada data kelas.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+<div id="class-table">
+    @include('classes.table', ['classes' => $classes])
 </div>
 {{-- Modal Konfirmasi Hapus --}}
 <div
@@ -258,6 +128,7 @@
     </div>
 </div>
 @endsection @section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const deleteButtons = document.querySelectorAll(".btn-delete");
@@ -295,6 +166,40 @@
             background: 'transparent'
         });
         @endif
+
+        // AJAX search
+        $('#search').on('keyup', function () {
+            let query = $(this).val();
+            let paginate = $('#paginate').val() ?? 25;
+
+            $.ajax({
+                url: "{{ route('classes.index') }}",
+                type: "GET",
+                data: {
+                    search: query,
+                    paginate: paginate
+                },
+                success: function (data) {
+                    $('#class-table').html($(data).find('#class-table').html());
+                }
+            });
+        });
+
+        $('#paginate').on('change', function () {
+            $('#search').trigger('keyup');
+        });
+
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            let url = $(this).attr('href');
+
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $('#class-table').html($(data).find('#class-table').html());
+                }
+            });
+        });
     });
 </script>
 @endsection

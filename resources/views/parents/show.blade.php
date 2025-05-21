@@ -1,6 +1,7 @@
-@extends('layouts.app') @section('title', $parent->name . ' | Sijinak') @section('content')
+@extends('layouts.app') @section('title', $parent->name . ' | Sijinak')
+@section('content')
 <div class="text-end mb-3">
-    <a href="{{ route('parents.index') }}" class="btn btn-outline-primary"
+    <a href="{{ url()->previous() }}" class="btn btn-outline-primary"
         >Kembali</a
     >
 </div>
@@ -43,7 +44,8 @@
         <td>
             <span class="fw-medium"
                 >@forelse ($parent->students as $student)
-                <span class="fw-medium">{{ $student->classes->className }}</span><br />
+                <span class="fw-medium">{{ $student->classes->className }}</span
+                ><br />
                 @empty
                 <span>-</span>
                 @endforelse</span

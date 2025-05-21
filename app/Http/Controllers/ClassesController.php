@@ -22,7 +22,7 @@ class ClassesController extends Controller
             $query->where('className', 'like', "%{$search}%");
         }
 
-        $classes = $query->orderBy('className')->get();
+        $classes = $query->orderBy('className')->paginate(25);
 
         $students = Students::all();
 
