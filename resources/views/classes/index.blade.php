@@ -59,7 +59,7 @@
                 <input
                     type="text"
                     name="className"
-                    class="form-control"    
+                    class="form-control"
                     placeholder="Nama Kelas"
                     value="{{ $showCreateOffcanvas ? old('className') : '' }}"
                     required
@@ -79,9 +79,9 @@
                 </button>
             </div>
         </form>
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            @foreach ($errors->all() as $error) {{ $error }} @endforeach
+        @if($showCreateOffcanvas)
+        <div id="alert-message" class="alert alert-danger">
+            {{ $errors->first() }}
         </div>
         @endif
     </div>
@@ -120,11 +120,9 @@
                         >
                             <i class="bx bx-edit"></i>
                         </button>
-
                         @php $showEditOffcanvas = ($errors->any() &&
                         session('error_source') === 'update' &&
                         session('edited_id') == $class->id); @endphp
-
                         <div
                             class="offcanvas offcanvas-end {{ $showEditOffcanvas ? 'show' : '' }}"
                             id="offcanvasUbahKelas-{{ $class->id }}"
@@ -184,10 +182,12 @@
                                         </button>
                                     </div>
                                 </form>
-                                @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    @foreach ($errors->all() as $error) {{
-                                    $error }} @endforeach
+                                @if($showEditOffcanvas)
+                                <div
+                                    id="alert-message-{{ $class->id }}"
+                                    class="alert alert-danger"
+                                >
+                                    {{ $errors->first() }}
                                 </div>
                                 @endif
                             </div>
@@ -275,12 +275,6 @@
                 deleteForm.action = `/classes/${classId}`;
                 deleteModal.show();
             });
-        });
-
-        document.querySelectorAll(".offcanvas .alert").forEach((alert) => {
-            setTimeout(() => {
-                alert.remove();
-            }, 2000);
         });
 
         document.querySelectorAll(".offcanvas").forEach((offcanvas) => {

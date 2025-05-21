@@ -97,7 +97,8 @@
                     required
                 />
                 <div id="nameHelp" class="form-text">
-                    Masukkan nama siswa, pisahkan dengan koma jika lebih dari satu.
+                    Masukkan nama siswa, pisahkan dengan koma jika lebih dari
+                    satu.
                 </div>
             </div>
             <div class="d-flex gap-2 mt-2 mb-3">
@@ -113,9 +114,9 @@
                 </button>
             </div>
         </form>
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            @foreach ($errors->all() as $error) {{ $error }} @endforeach
+        @if($showCreateOffcanvas)
+        <div id="alert-message" class="alert alert-danger">
+            {{ $errors->first() }}
         </div>
         @endif
     </div>
@@ -192,11 +193,9 @@
                         >
                             <i class="bx bx-edit"></i>
                         </button>
-
                         @php $showEditOffcanvas = ($errors->any() &&
                         session('error_source') === 'update' &&
                         session('edited_id') == $parent->id); @endphp
-
                         <div
                             class="offcanvas offcanvas-end {{ $showEditOffcanvas ? 'show' : '' }}"
                             id="offcanvasUbahWali-{{ $parent->id }}"
@@ -268,7 +267,6 @@
                                             required
                                         />
                                     </div>
-
                                     <div class="d-flex gap-2 mt-2 mb-3">
                                         <button
                                             type="submit"
@@ -285,9 +283,9 @@
                                         </button>
                                     </div>
                                 </form>
-                                @if($errors->any())
+                                @if($showEditOffcanvas)
                                 <div
-                                    id="alert-message"
+                                    id="alert-message-{{ $parent->id }}"
                                     class="alert alert-danger"
                                 >
                                     {{ $errors->first() }}
@@ -363,7 +361,6 @@
         </form>
     </div>
 </div>
-
 @endsection @section('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -382,12 +379,6 @@
                 deleteForm.action = `/parents/${parentId}`;
                 deleteModal.show();
             });
-        });
-
-        document.querySelectorAll(".offcanvas .alert").forEach((alert) => {
-            setTimeout(() => {
-                alert.remove();
-            }, 2000);
         });
 
         document.querySelectorAll(".offcanvas").forEach((offcanvas) => {

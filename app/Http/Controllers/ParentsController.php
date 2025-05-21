@@ -6,6 +6,7 @@ use App\Models\Parents;
 use App\Models\Students;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -67,7 +68,6 @@ class ParentsController extends Controller
         }
 
         $validated = $validator->validated();
-
         $studentNames = array_filter(array_map('trim', explode(',', $validated['student_name'])));
 
         if (empty($studentNames)) {
@@ -77,51 +77,9 @@ class ParentsController extends Controller
                 ->with('error_source', 'create');
         }
 
-        $user = User::where('email', $validated['email'])->first();
-
-        if ($user) {
-            $parent = Parents::where('user_id', $user->id)->first();
-
-            if (!$parent) {
-                return redirect()->back()
-                    ->withErrors(['email' => 'Email ini sudah terdaftar.'])
-                    ->withInput()
-                    ->with('error_source', 'create');
-            }
-
-            if (strtolower($parent->name) !== strtolower($validated['parent_name'])) {
-                return redirect()->back()
-                    ->withErrors(['parent_name' => 'Nama wali tidak sesuai dengan data yang terdaftar.'])
-                    ->withInput()
-                    ->with('error_source', 'create');
-            }
-        } else {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email|unique:users,email',
-            ], [
-                'email.unique' => 'Email ini sudah terdaftar.',
-            ]);
-
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput()
-                    ->with('error_source', 'create');
-            }
-
-            $user = User::create([
-                'email'    => $validated['email'],
-                'password' => bcrypt('12345678'),
-                'role'     => 'parent',
-            ]);
-
-            $parent = Parents::create([
-                'name'    => $validated['parent_name'],
-                'user_id' => $user->id,
-            ]);
-        }
-
         $errors = [];
+        $studentsToAssociate = [];
+
         foreach ($studentNames as $name) {
             $student = Students::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
 
@@ -135,8 +93,7 @@ class ParentsController extends Controller
                 continue;
             }
 
-            $student->parent()->associate($parent);
-            $student->save();
+            $studentsToAssociate[] = $student;
         }
 
         if (!empty($errors)) {
@@ -146,7 +103,72 @@ class ParentsController extends Controller
                 ->with('error_source', 'create');
         }
 
-        return redirect()->back()->with('success', 'Siswa berhasil ditambahkan ke wali.');
+        DB::beginTransaction();
+
+        try {
+            $user = User::where('email', $validated['email'])->first();
+
+            if ($user) {
+                $parent = Parents::where('user_id', $user->id)->first();
+
+                if (!$parent) {
+                    DB::rollBack();
+                    return redirect()->back()
+                        ->withErrors(['email' => 'Email ini sudah terdaftar.'])
+                        ->withInput()
+                        ->with('error_source', 'create');
+                }
+
+                if (strtolower($parent->name) !== strtolower($validated['parent_name'])) {
+                    DB::rollBack();
+                    return redirect()->back()
+                        ->withErrors(['parent_name' => 'Nama wali tidak sesuai dengan data yang terdaftar.'])
+                        ->withInput()
+                        ->with('error_source', 'create');
+                }
+            } else {
+                $validator = Validator::make($request->all(), [
+                    'email' => 'required|email|unique:users,email',
+                ], [
+                    'email.unique' => 'Email ini sudah terdaftar.',
+                ]);
+
+                if ($validator->fails()) {
+                    DB::rollBack();
+                    return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput()
+                        ->with('error_source', 'create');
+                }
+
+                $user = User::create([
+                    'email'    => $validated['email'],
+                    'password' => bcrypt('12345678'),
+                    'role'     => 'parent',
+                ]);
+
+                $parent = Parents::create([
+                    'name'    => $validated['parent_name'],
+                    'user_id' => $user->id,
+                ]);
+            }
+
+            foreach ($studentsToAssociate as $student) {
+                $student->parent()->associate($parent);
+                $student->save();
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Siswa berhasil ditambahkan ke wali.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()
+                ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data.'])
+                ->withInput()
+                ->with('error_source', 'create');
+        }
     }
     /**
      * Display the specified resource.
@@ -199,6 +221,17 @@ class ParentsController extends Controller
         if (empty($studentNames)) {
             return redirect()->back()
                 ->withErrors(['student_name' => 'Nama siswa tidak boleh kosong.'])
+                ->withInput()
+                ->with('error_source', 'update')
+                ->with('edited_id', $parent->id);
+        }
+
+        $lowercaseNames = array_map('strtolower', $studentNames);
+        $uniqueNames = array_unique($lowercaseNames);
+
+        if (count($lowercaseNames) !== count($uniqueNames)) {
+            return redirect()->back()
+                ->withErrors(['student_name' => 'Nama siswa tidak boleh duplikat.'])
                 ->withInput()
                 ->with('error_source', 'update')
                 ->with('edited_id', $parent->id);

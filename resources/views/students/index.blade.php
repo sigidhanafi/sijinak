@@ -127,9 +127,9 @@
                 </button>
             </div>
         </form>
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            @foreach ($errors->all() as $error) {{ $error }} @endforeach
+        @if($showCreateOffcanvas)
+        <div id="alert-message" class="alert alert-danger">
+            {{ $errors->first() }}
         </div>
         @endif
     </div>
@@ -208,11 +208,9 @@
                         >
                             <i class="bx bx-edit"></i>
                         </button>
-
                         @php $showEditOffcanvas = ($errors->any() &&
                         session('error_source') === 'update' &&
                         session('edited_id') == $student->id); @endphp
-
                         <div
                             class="offcanvas offcanvas-end {{ $showEditOffcanvas ? 'show' : '' }}"
                             id="offcanvasUbahSiswa-{{ $student->id }}"
@@ -322,9 +320,9 @@
                                         </button>
                                     </div>
                                 </form>
-                                @if($errors->any())
+                                @if($showEditOffcanvas)
                                 <div
-                                    id="alert-message"
+                                    id="alert-message-{{ $student->id }}"
                                     class="alert alert-danger"
                                 >
                                     {{ $errors->first() }}
@@ -415,12 +413,6 @@
                 deleteForm.action = `/students/${studentId}`;
                 deleteModal.show();
             });
-        });
-
-        document.querySelectorAll(".offcanvas .alert").forEach((alert) => {
-            setTimeout(() => {
-                alert.remove();
-            }, 2000);
         });
 
         document.querySelectorAll(".offcanvas").forEach((offcanvas) => {
