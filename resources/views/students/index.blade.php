@@ -1,4 +1,4 @@
-@extends('layouts.app') @section('title', 'Student Page | Sijinak')
+@extends('layouts.app') @section('title', 'Students Page | Sijinak')
 @section('content')
 <h3>Daftar Siswa</h3>
 <div class="row mb-3">
@@ -149,7 +149,6 @@
             @endforeach
         </select>
     </form>
-
     @unless ($students->onFirstPage())
     <a
         href="{{ $students->previousPageUrl() }}&paginate={{ request('paginate', 10) }}"
@@ -212,7 +211,7 @@
 @endsection @section('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    function bindDeleteButtons() {
         const deleteButtons = document.querySelectorAll(".btn-delete");
         const deleteForm = document.getElementById("deleteForm");
         const studentNameEl = document.getElementById("studentName");
@@ -229,6 +228,10 @@
                 deleteModal.show();
             });
         });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        bindDeleteButtons(); // Pasang event listener saat pertama kali load
 
         document.querySelectorAll(".offcanvas").forEach((offcanvas) => {
             offcanvas.addEventListener("hidden.bs.offcanvas", () => {
@@ -259,6 +262,7 @@
                 },
                 success: function (data) {
                     $('#student-table').html($(data).find('#student-table').html());
+                    bindDeleteButtons(); // Re-bind setelah data di-reload
                 },
                 error: function () {
                     alert('Terjadi kesalahan saat mengambil data.');

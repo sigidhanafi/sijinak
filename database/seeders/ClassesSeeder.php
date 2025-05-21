@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Classes;
+use App\Models\Teachers;
 use Illuminate\Database\Seeder;
 
 class ClassesSeeder extends Seeder
@@ -12,34 +13,15 @@ class ClassesSeeder extends Seeder
      */
     public function run(): void
     {
-        Classes::create([
-            'className' => 'X IPA',
-            'teacherId' => 1,
-        ]);
+        $classNames = ['X IPA', 'X IPS', 'XI IPA', 'XI IPS', 'XII IPA', 'XII IPS'];
 
-        Classes::create([
-            'className' => 'X IPS',
-            'teacherId' => 2,
-        ]);
+        $teachersForClass = Teachers::inRandomOrder()->take(count($classNames))->get();
 
-        Classes::create([
-            'className' => 'XI IPA',
-            'teacherId' => 3,
-        ]);
-
-        Classes::create([
-            'className' => 'XI IPS',
-            'teacherId' => 4,
-        ]);
-
-        Classes::create([
-            'className' => 'XII IPA',
-            'teacherId' => 5,
-        ]);
-
-        Classes::create([
-            'className' => 'XII IPS',
-            'teacherId' => 6,
-        ]);
+        foreach ($classNames as $index => $className) {
+            Classes::create([
+                'className' => $className,
+                'teacherId' => $teachersForClass[$index]->id,
+            ]);
+        }
     }
 }

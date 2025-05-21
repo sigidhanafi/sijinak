@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Classes;
 use App\Models\Students;
+use App\Models\Teachers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -15,15 +16,20 @@ class ClassesController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Classes::with('students');
+        $query = Classes::with(['students', 'teacher']);
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('className', 'like', "%{$search}%");
+
+            $query->where(function ($q) use ($search) {
+                $q->where('className', 'like', "%{$search}%")
+                    ->orWhereHas('teacher', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
+            });
         }
 
         $classes = $query->orderBy('className')->get();
-
         $students = Students::all();
 
         return view('classes.index', compact('classes', 'students'));
@@ -42,10 +48,9 @@ class ClassesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'className' => 'required|string|max:255|unique:classes,className',
-            'teacherId' => 'nullable|string|max:255|',
+            'teacherName' => 'nullable|string|max:255',
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
-            'teacherId.unique' => 'NIP ini sudah terdaftar.',
         ]);
 
         if ($validator->fails()) {
@@ -55,7 +60,41 @@ class ClassesController extends Controller
                 ->with('error_source', 'create');
         }
 
-        Classes::create($validator->validated());
+        $validated = $validator->validated();
+
+        $teacherId = null;
+
+        if (!empty($validated['teacherName'])) {
+            $teacher = Teachers::where('name', $validated['teacherName'])->first();
+
+            if (!$teacher) {
+                return redirect()->back()
+                    ->withErrors(['teacherName' => 'Guru dengan nama tersebut tidak ditemukan.'])
+                    ->withInput()
+                    ->with('error_source', 'create');
+            }
+
+            if ($teacher->is_on_duty) {
+                return redirect()->back()
+                    ->withErrors(['teacherName' => 'Guru piket tidak bisa menjadi wali kelas.'])
+                    ->withInput()
+                    ->with('error_source', 'create');
+            }
+
+            if ($teacher->class) {
+                return redirect()->back()
+                    ->withErrors(['teacherName' => 'Guru ini sudah menjadi wali kelas.'])
+                    ->withInput()
+                    ->with('error_source', 'create');
+            }
+
+            $teacherId = $teacher->id;
+        }
+
+        Classes::create([
+            'className' => $validated['className'],
+            'teacherId' => $teacherId,
+        ]);
 
         return redirect()->back()->with('success', 'Kelas berhasil ditambahkan.');
     }
@@ -100,15 +139,9 @@ class ClassesController extends Controller
                 'max:255',
                 Rule::unique('classes', 'className')->ignore($class->id),
             ],
-            'teacherId' => [
-                'nullable',
-                'string',
-                'max:255',
-                Rule::unique('classes', 'teacherId')->ignore($class->id),
-            ],
+            'teacherName' => 'nullable|string|max:255',
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
-            'teacherId.unique' => 'NIP ini sudah terdaftar.',
         ]);
 
         if ($validator->fails()) {
@@ -119,7 +152,44 @@ class ClassesController extends Controller
                 ->with('edited_id', $class->id);
         }
 
-        $class->update($validator->validated());
+        $validated = $validator->validated();
+
+        $teacherId = null;
+
+        if (!empty($validated['teacherName'])) {
+            $teacher = Teachers::where('name', $validated['teacherName'])->first();
+
+            if (!$teacher) {
+                return redirect()->back()
+                    ->withErrors(['teacherName' => 'Guru dengan nama tersebut tidak ditemukan.'])
+                    ->withInput()
+                    ->with('error_source', 'update')
+                    ->with('edited_id', $class->id);
+            }
+
+            if ($teacher->is_on_duty) {
+                return redirect()->back()
+                    ->withErrors(['teacherName' => 'Guru piket tidak bisa menjadi wali kelas.'])
+                    ->withInput()
+                    ->with('error_source', 'update')
+                    ->with('edited_id', $class->id);
+            }
+
+            if ($teacher->class && $teacher->class->id !== $class->id) {
+                return redirect()->back()
+                    ->withErrors(['teacherName' => 'Guru ini sudah menjadi wali kelas lain.'])
+                    ->withInput()
+                    ->with('error_source', 'update')
+                    ->with('edited_id', $class->id);
+            }
+
+            $teacherId = $teacher->id;
+        }
+
+        $class->update([
+            'className' => $validated['className'],
+            'teacherId' => $teacherId,
+        ]);
 
         return redirect()->back()
             ->with('edit_success', true)

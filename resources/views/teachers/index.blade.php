@@ -1,46 +1,46 @@
-@extends('layouts.app') @section('title', 'Parents Page | Sijinak')
+@extends('layouts.app') @section('title', 'Teachers Page | Sijinak')
 @section('content')
-<h3>Daftar Wali Siswa</h3>
+<h3>Daftar Guru</h3>
 <div class="row mb-3">
     <div class="col-md-6">
         <form
             class="d-flex flex-column flex-sm-row gap-2"
             method="GET"
-            action="{{ route('parents.index') }}"
+            action="{{ route('teachers.index') }}"
         >
             <input
                 id="search"
                 class="form-control"
                 type="text"
                 name="search"
-                placeholder="Cari Wali Siswa"
+                placeholder="Cari Guru"
                 value="{{ request('search') }}"
             />
         </form>
     </div>
 </div>
-{{-- Tambah Wali --}}
+{{-- Tambah Guru --}}
 <button
     class="btn btn-primary mb-3"
     type="button"
     data-bs-toggle="offcanvas"
-    data-bs-target="#offcanvasTambahWali"
-    aria-controls="offcanvasTambahWali"
+    data-bs-target="#offcanvasTambahGuru"
+    aria-controls="offcanvasTambahGuru"
 >
-    Tambah Wali Siswa
+    Tambah Guru
 </button>
 @php $showCreateOffcanvas = ($errors->any() && session('error_source') ===
 'create'); @endphp
 <div
     class="offcanvas offcanvas-end {{ $showCreateOffcanvas ? 'show' : '' }}"
     tabindex="-1"
-    id="offcanvasTambahWali"
-    aria-labelledby="offcanvasTambahWaliLabel"
+    id="offcanvasTambahGuru"
+    aria-labelledby="offcanvasTambahGuruLabel"
     style="{{ $showCreateOffcanvas ? 'visibility: visible;' : '' }}"
 >
     <div class="offcanvas-header">
-        <h3 class="offcanvas-title" id="offcanvasTambahWaliLabel">
-            Tambah Wali Siswa
+        <h3 class="offcanvas-title" id="offcanvasTambahGuruLabel">
+            Tambah Guru
         </h3>
         <button
             type="button"
@@ -50,23 +50,20 @@
         ></button>
     </div>
     <div class="offcanvas-body">
-        <form action="{{ route('parents.store') }}" method="POST">
+        <form action="{{ route('teachers.store') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="parent_name" class="form-label"
-                    >Nama Wali Siswa</label
-                >
+                <label for="name" class="form-label">Nama</label>
                 <input
                     type="text"
-                    name="parent_name"
-                    id="parent_name"
+                    name="name"
                     class="form-control"
                     placeholder="Nama Lengkap"
-                    value="{{ $showCreateOffcanvas ? old('parent_name') : '' }}"
+                    value="{{ $showCreateOffcanvas ? old('name') : '' }}"
                     required
                 />
                 <div id="nameHelp" class="form-text">
-                    Masukkan nama wali siswa.
+                    Masukkan nama guru.
                 </div>
             </div>
             <div class="mb-3">
@@ -80,23 +77,39 @@
                     required
                 />
                 <div id="nameHelp" class="form-text">
-                    Masukkan email wali siswa.
+                    Masukkan email guru.
                 </div>
             </div>
             <div class="mb-3">
-                <label for="student_name" class="form-label">Nama Siswa</label>
+                <label for="nip" class="form-label">NIP</label>
                 <input
                     type="text"
-                    name="student_name"
-                    id="student_name"
+                    name="nip"
                     class="form-control"
-                    placeholder="Contoh: John Doe, John Doe, John Doe"
-                    value="{{ $showCreateOffcanvas ? old('student_name') : '' }}"
+                    placeholder="Nomor Induk Siswa Nasional"
+                    value="{{ $showCreateOffcanvas ? old('nip') : '' }}"
                     required
                 />
                 <div id="nameHelp" class="form-text">
-                    Masukkan nama siswa, pisahkan dengan koma jika lebih dari
-                    satu.
+                    Masukkan NIP siswa.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="defaultSelect" class="form-label">Status Guru</label>
+                <select name="is_on_duty" class="form-select" required>
+                    <option value="" disabled
+                        {{ $showCreateOffcanvas && old('is_on_duty') !== null ? '' : 'selected' }}>
+                        Status Guru
+                    </option>
+                    <option value="0" {{ $showCreateOffcanvas && old('is_on_duty') == '0' ? 'selected' : '' }}>
+                        Guru
+                    </option>
+                    <option value="1" {{ $showCreateOffcanvas && old('is_on_duty') == '1' ? 'selected' : '' }}>
+                        Guru Piket
+                    </option>
+                </select>
+                <div id="statusHelp" class="form-text">
+                    Pilih status guru.
                 </div>
             </div>
             <div class="d-flex gap-2 mt-2 mb-3">
@@ -120,42 +133,55 @@
     </div>
 </div>
 {{-- Pagination --}}
+@php
+    $queryExceptPaginate = request()->except('paginate');
+    $queryExceptFilter = request()->except('filter');
+@endphp
 <div class="mb-3 d-flex gap-2 align-items-center">
     <span>Show:</span>
     <form method="GET" action="{{ url()->current() }}">
-        <select
-            name="paginate"
-            onchange="this.form.submit()"
-            class="form-select"
-        >
-            @foreach ([10, 50, 100, 500] as $size) @php $selected =
-            request('paginate', 10) == $size ? 'selected' : ''; @endphp
-            <option value="{{ $size }}" {{ $selected }}>
-                {{ $size }}
-            </option>
+        @foreach($queryExceptPaginate as $key => $value)
+            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+        @endforeach
+        <select name="paginate" onchange="this.form.submit()" class="form-select">
+            @foreach ([10, 50, 100, 500] as $size)
+                @php $selected = request('paginate', 10) == $size ? 'selected' : ''; @endphp
+                <option value="{{ $size }}" {{ $selected }}>{{ $size }}</option>
             @endforeach
         </select>
     </form>
-
-    @unless ($parents->onFirstPage())
+    @unless ($teachers->onFirstPage())
     <a
-        href="{{ $parents->previousPageUrl() }}&paginate={{ request('paginate', 10) }}"
+        href="{{ $teachers->previousPageUrl() }}&paginate={{ request('paginate', 10) }}"
         class="btn btn-primary"
     >
         Previous
     </a>
-    @endunless @if ($parents->hasMorePages())
+    @endunless @if ($teachers->hasMorePages())
     <a
-        href="{{ $parents->nextPageUrl() }}&paginate={{ request('paginate', 10) }}"
+        href="{{ $teachers->nextPageUrl() }}&paginate={{ request('paginate', 10) }}"
         class="btn btn-primary"
     >
         Next
     </a>
     @endif
 </div>
-{{-- Tabel Wali Siswa --}}
-<div id="parent-table">
-    @include('parents.table', ['parents' => $parents])
+{{-- Filter Guru --}}
+<div class="mb-3">
+    <form method="GET" action="{{ url()->current() }}">
+        @foreach($queryExceptFilter as $key => $value)
+            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+        @endforeach
+        <select name="filter" onchange="this.form.submit()" class="form-select w-auto d-inline-block">
+            <option value="" {{ request('filter') === null ? 'selected' : '' }}>Semua Guru</option>
+            <option value="wali" {{ request('filter') === 'wali' ? 'selected' : '' }}>Wali Kelas</option>
+            <option value="duty" {{ request('filter') === 'duty' ? 'selected' : '' }}>Guru Piket</option>
+        </select>
+    </form>
+</div>
+{{-- Tabel Guru --}}
+<div id="teacher-table">
+    @include('teachers.table', ['teachers' => $teachers])
 </div>
 {{-- Modal Konfirmasi Hapus --}}
 <div
@@ -167,7 +193,6 @@
     <div class="modal-dialog">
         <form id="deleteForm" method="POST">
             @csrf @method('DELETE')
-            <input type="hidden" name="redirect_to" id="redirectInput" />
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Konfirmasi Hapus</h5>
@@ -180,7 +205,7 @@
                 <div class="modal-body">
                     <p>
                         Yakin ingin menghapus siswa
-                        <strong id="parentName"></strong>?
+                        <strong id="modalTeacherName"></strong>?
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -203,17 +228,17 @@
     function bindDeleteButtons() {
         const deleteButtons = document.querySelectorAll(".btn-delete");
         const deleteForm = document.getElementById("deleteForm");
-        const parentNameEl = document.getElementById("parentName");
+        const teacherNameEl = document.getElementById("modalTeacherName");
         const deleteModalEl = document.getElementById("deleteConfirmModal");
         const deleteModal = new bootstrap.Modal(deleteModalEl);
 
         deleteButtons.forEach((button) => {
             button.addEventListener("click", function () {
-                const parentId = this.getAttribute("data-id");
-                const parentName = this.getAttribute("data-name");
+                const teacherId = this.getAttribute("data-id");
+                const teacherName = this.getAttribute("data-name");
 
-                parentNameEl.textContent = parentName;
-                deleteForm.action = `/parents/${parentId}`;
+                teacherNameEl.textContent = teacherName;
+                deleteForm.action = `/teachers/${teacherId}`;
                 deleteModal.show();
             });
         });
@@ -240,22 +265,26 @@
         @endif
 
         // AJAX search
-        $('#search').on('keyup', function () {
+        $("#search").on("keyup", function () {
             let query = $(this).val();
+            let filter = $("select[name=filter]").val();
 
             $.ajax({
-                url: "{{ route('parents.index') }}",
+                url: "{{ route('teachers.index') }}",
                 type: "GET",
                 data: {
-                    search: query
+                    search: query,
+                    filter: filter,
                 },
                 success: function (data) {
-                    $('#parent-table').html($(data).find('#parent-table').html());
-                    bindDeleteButtons(); // Re-bind delete buttons
+                    $("#teacher-table").html(
+                        $(data).find("#teacher-table").html()
+                    );
+                    bindDeleteButtons(); // pasang ulang event listener delete
                 },
                 error: function () {
-                    alert('Terjadi kesalahan saat mengambil data.');
-                }
+                    alert("Terjadi kesalahan saat mengambil data.");
+                },
             });
         });
     });

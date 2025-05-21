@@ -118,9 +118,9 @@
             </ul>
         </li>
 
-        @php
-        $isDataManagementActive = request()->routeIs('classes.*') || request()->routeIs('students.*') || request()->routeIs('parents.*') || request()->routeIs('teachers.*');
-        @endphp
+        @php $isDataManagementActive = request()->routeIs('classes.*') ||
+        request()->routeIs('students.*') || request()->routeIs('parents.*') ||
+        request()->routeIs('teachers.*'); @endphp
 
         <li class="menu-item {{ $isDataManagementActive ? 'open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -129,22 +129,28 @@
                 <div class="badge bg-primary rounded-pill ms-auto">3</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ request()->routeIs('classes.*') ? 'active' : '' }}">
+                <li
+                    class="menu-item {{ request()->routeIs('classes.*') ? 'active' : '' }}"
+                >
                     <a href="{{ route('classes.index') }}" class="menu-link">
                         <div data-i18n="Kelas">Kelas</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item {{ request()->routeIs('teachers.*') ? 'active' : '' }}">
+                    <a href="{{ route('teachers.index') }}" class="menu-link">
                         <div data-i18n="Guru">Guru</div>
                     </a>
                 </li>
-                <li class="menu-item {{ request()->routeIs('students.*') ? 'active' : '' }}">
+                <li
+                    class="menu-item {{ request()->routeIs('students.*') ? 'active' : '' }}"
+                >
                     <a href="{{ route('students.index') }}" class="menu-link">
                         <div data-i18n="Siswa">Siswa</div>
                     </a>
                 </li>
-                <li class="menu-item {{ request()->routeIs('parents.*') ? 'active' : '' }}">
+                <li
+                    class="menu-item {{ request()->routeIs('parents.*') ? 'active' : '' }}"
+                >
                     <a href="{{ route('parents.index') }}" class="menu-link">
                         <div data-i18n="Wali">Wali</div>
                     </a>

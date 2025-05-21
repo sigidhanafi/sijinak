@@ -36,7 +36,11 @@ class UserFactory extends Factory
         return $this->state(fn () => ['role' => 'student']);
     }
 
-    
+    public function teacher()
+    {
+        return $this->state(fn () => ['role' => 'teacher']);
+    }
+
     public function parent()
     {
         return $this->state(fn () => ['role' => 'parent']);

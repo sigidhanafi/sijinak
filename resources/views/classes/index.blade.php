@@ -1,4 +1,4 @@
-@extends('layouts.app') @section('title', 'Class Page | Sijinak')
+@extends('layouts.app') @section('title', 'Classes Page | Sijinak')
 @section('content')
 <h3>Daftar Kelas</h3>
 <div class="row mb-3">
@@ -66,6 +66,19 @@
                     Masukkan nama kelas.
                 </div>
             </div>
+            <div class="mb-3">
+                <label for="teacherName" class="form-label">Nama Wali Kelas</label>
+                <input
+                    type="text"
+                    name="teacherName"
+                    class="form-control"
+                    placeholder="Nama Lengkap"
+                    value="{{ $showCreateOffcanvas ? old('teacherName') : '' }}"
+                />
+                <div id="nameHelp" class="form-text">
+                    Masukkan nama wali kelas.
+                </div>
+            </div>
             <div class="d-flex gap-2 mt-2 mb-3">
                 <button type="submit" class="btn btn-primary">Simpan</button>
                 <button
@@ -130,7 +143,7 @@
 @endsection @section('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    function bindDeleteButtons() {
         const deleteButtons = document.querySelectorAll(".btn-delete");
         const deleteForm = document.getElementById("deleteForm");
         const classNameEl = document.getElementById("modalClassName");
@@ -147,12 +160,14 @@
                 deleteModal.show();
             });
         });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        bindDeleteButtons();
 
         document.querySelectorAll(".offcanvas").forEach((offcanvas) => {
             offcanvas.addEventListener("hidden.bs.offcanvas", () => {
-                offcanvas
-                    .querySelectorAll(".alert")
-                    .forEach((alert) => alert.remove());
+                offcanvas.querySelectorAll(".alert").forEach((alert) => alert.remove());
             });
         });
 
@@ -179,6 +194,7 @@
                 },
                 success: function (data) {
                     $('#class-table').html($(data).find('#class-table').html());
+                    bindDeleteButtons(); // Re-bind event listeners after replacing HTML
                 },
                 error: function () {
                     alert('Terjadi kesalahan saat mengambil data.');
@@ -188,3 +204,4 @@
     });
 </script>
 @endsection
+

@@ -182,7 +182,7 @@
 @endsection @section('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    function bindDeleteButtons() {
         const deleteButtons = document.querySelectorAll(".btn-delete");
         const deleteForm = document.getElementById("deleteForm");
         const studentNameEl = document.getElementById("studentName");
@@ -199,12 +199,14 @@
                 deleteModal.show();
             });
         });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        bindDeleteButtons(); // Pasang event listener saat pertama kali load
 
         document.querySelectorAll(".offcanvas").forEach((offcanvas) => {
             offcanvas.addEventListener("hidden.bs.offcanvas", () => {
-                offcanvas
-                    .querySelectorAll(".alert")
-                    .forEach((alert) => alert.remove());
+                offcanvas.querySelectorAll(".alert").forEach((alert) => alert.remove());
             });
         });
 
@@ -224,13 +226,14 @@
             let query = $(this).val();
 
             $.ajax({
-                url: "{{ route('classes.show', $class->id) }}",
+                url: "{{ route('students.index') }}",
                 type: "GET",
                 data: {
                     search: query
                 },
                 success: function (data) {
                     $('#student-table').html($(data).find('#student-table').html());
+                    bindDeleteButtons(); // Re-bind setelah data di-reload
                 },
                 error: function () {
                     alert('Terjadi kesalahan saat mengambil data.');

@@ -15,7 +15,9 @@
                     <span class="fw-medium">{{ $class->className }}</span>
                 </td>
                 <td style="word-wrap: break-word; white-space: normal;">
-                    <span class="fw-medium">-</span>
+                    <span class="fw-medium"
+                        >{{ $class->teacher->name ?? 'Belum ditentukan' }}</span
+                    >
                 </td>
                 <td style="word-wrap: break-word; white-space: normal;">
                     <span class="fw-medium"
@@ -81,6 +83,21 @@
                                             value="{{ $showEditOffcanvas ? old('className') : $class->className }}"
                                             data-initial-value="{{ $class->className }}"
                                             required
+                                        />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label
+                                            for="teacherName"
+                                            class="form-label"
+                                            >Nama Wali Kelas</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="teacherName"
+                                            name="teacherName"
+                                            value="{{ $showEditOffcanvas ? old('teacherName') : $class->teacher?->name }}"
+                                            data-initial-value="{{ $class->teacher?->name }}"
                                         />
                                     </div>
                                     <div class="d-flex gap-2 mt-2 mb-3">

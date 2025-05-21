@@ -11,21 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('classes', function (Blueprint $table) {
+        Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-            $table->string('className');
-            $table->foreignId('teacherId')->nullable()->constrained(
-                table: 'teachers',
-                indexName: 'teachers_teacherId'
-            )->onDelete('set null');
+            $table->foreignId('user_id')->constrainded(
+                table: 'users',
+                indexName: 'users_user_id'
+            );
+            $table->string('name');
+            $table->string('nip')->unique();
+            $table->boolean('is_on_duty')->default(false);
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('classes');
+        Schema::dropIfExists('teachers');
     }
 };

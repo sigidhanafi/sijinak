@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Classes;
 use App\Models\Parents;
 use App\Models\Students;
+use App\Models\Teachers;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,11 +23,13 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
+            TeachersSeeder::class,
             ClassesSeeder::class,
             StudentsSeeder::class,
             ParentsSeeder::class,
         ]);
-
+        
+        Teachers::all();
         Classes::all();
         Students::all();
         Parents::all();
