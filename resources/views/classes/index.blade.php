@@ -170,33 +170,18 @@
         // AJAX search
         $('#search').on('keyup', function () {
             let query = $(this).val();
-            let paginate = $('#paginate').val() ?? 50;
 
             $.ajax({
                 url: "{{ route('classes.index') }}",
                 type: "GET",
                 data: {
-                    search: query,
-                    paginate: paginate
+                    search: query
                 },
                 success: function (data) {
                     $('#class-table').html($(data).find('#class-table').html());
-                }
-            });
-        });
-
-        $('#paginate').on('change', function () {
-            $('#search').trigger('keyup');
-        });
-
-        $(document).on('click', '.pagination a', function (e) {
-            e.preventDefault();
-            let url = $(this).attr('href');
-
-            $.ajax({
-                url: url,
-                success: function (data) {
-                    $('#class-table').html($(data).find('#class-table').html());
+                },
+                error: function () {
+                    alert('Terjadi kesalahan saat mengambil data.');
                 }
             });
         });

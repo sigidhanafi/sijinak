@@ -240,33 +240,18 @@
         // AJAX search
         $('#search').on('keyup', function () {
             let query = $(this).val();
-            let paginate = $('#paginate').val() ?? 10;
 
             $.ajax({
                 url: "{{ route('parents.index') }}",
                 type: "GET",
                 data: {
-                    search: query,
-                    paginate: paginate
+                    search: query
                 },
                 success: function (data) {
                     $('#parent-table').html($(data).find('#parent-table').html());
-                }
-            });
-        });
-
-        $('#paginate').on('change', function () {
-            $('#search').trigger('keyup');
-        });
-
-        $(document).on('click', '.pagination a', function (e) {
-            e.preventDefault();
-            let url = $(this).attr('href');
-
-            $.ajax({
-                url: url,
-                success: function (data) {
-                    $('#parent-table').html($(data).find('#parent-table').html());
+                },
+                error: function () {
+                    alert('Terjadi kesalahan saat mengambil data.');
                 }
             });
         });
