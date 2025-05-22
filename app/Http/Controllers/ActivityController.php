@@ -47,7 +47,7 @@ class ActivityController extends Controller
      */
     public function create()
     {
-        //show the form to
+        // 
     }
 
     /**
@@ -80,6 +80,7 @@ class ActivityController extends Controller
     public function show(Activity $activity)
     {
         //
+        return view('activity-log.user.show', compact('activity'));
     }
 
     /**
