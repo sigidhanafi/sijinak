@@ -77,20 +77,24 @@
       </ul>
     </li>
 
-    <li class="menu-item">
+    @php
+      $isAktivitasActive = request()->is('generate-qr') || request()->is('scan-qr');
+    @endphp
+    <!-- Activities -->
+    <li class="menu-item {{ $isAktivitasActive ? 'open' : '' }}">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-home-circle"></i>
         <div data-i18n="Aktivitas">Aktivitas</div>
         <div class="badge bg-primary rounded-pill ms-auto">3</div>
       </a>
       <ul class="menu-sub">
-        <li class="menu-item">
+        <li class="menu-item {{ request()->routeIs('generate-qr.*') ? 'active' : '' }}">
           <a href={{route('generate-qr.index')}} class="menu-link">
             <div data-i18n="Generate QR">Generate QR</div>
           </a>
         </li>
         <li class="menu-item">
-          <a href="#" class="menu-link">
+          <a href="#" class="menu-link {{ request()->routeIs('scan-qr.*') ? 'active' : '' }}">
             <div data-i18n="Scan QR">Scan QR</div>
           </a>
         </li>
