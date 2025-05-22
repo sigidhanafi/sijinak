@@ -77,15 +77,33 @@
                     <td class="text-center-middle">{{ $activity->created_at->format('D, d F y H:i:s') }}</td>
                     <td class="text-center align-middle">
                         <div class="d-flex justify-content-center align-items-center gap-1">
+                            
                             {{-- DELETE --}}
-                            <form action="{{ route('activities.destroy', $activity->id) }}" method="POST"
-                                onsubmit="return confirm('Yakin ingin menghapus activity ini?');">
+                            <form action="{{ route('activities.destroy', $activity->id) }}" method="POST" id="delete-form-{{ $activity->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm btn-icon me-1" title="Hapus">
+                                <button type="button" class="btn btn-danger btn-sm btn-icon me-1" data-bs-toggle="modal" data-bs-target="#hapusModal-{{ $activity->id }}" title="Hapus">
                                     <i class='bx bx-trash'></i>
                                 </button>
+                                <div class="modal fade" id="hapusModal-{{ $activity->id }}" tabindex="-1" aria-labelledby="hapusModalLabel-{{ $activity->id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="hapusModalLabel-{{ $activity->id }}">Konfirmasi Hapus</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Apakah kamu yakin ingin menghapus activity ini? Tindakan ini tidak dapat dibatalkan.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                <button type="button" class="btn btn-primary" onclick="document.getElementById('delete-form-{{ $activity->id }}').submit();">Ya, Hapus</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
+
                             {{-- VIEW USER DETAILS --}}
                             <button class="btn btn-info btn-sm btn-icon me-1" title="Lihat">
                                 <i class="bx bx-show"></i>
