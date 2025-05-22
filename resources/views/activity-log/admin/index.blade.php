@@ -23,11 +23,10 @@
     <header class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">Activity Log</h5>
 
-        {{-- Offacnvas Button to Create Activity --}}
-        <button class="btn btn-primary d-flex align-items-center" type="button" data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd">
-            <i class='bx bx-plus me-2'></i>
-            Create Activity</button>
+        {{-- CREATE Offcanvas Form --}}
+        <button class="btn btn-primary create-new" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd"><i class="bx bx-plus me-3"></i> Add New Record
+        </button>
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEnd" aria-labelledby="offcanvasEndLabel">
             {{-- Header --}}
             <div class="offcanvas-header">
@@ -49,7 +48,7 @@
                         <label for="activityId" class="form-label">Activity ID</label>
                         <input type="number" class="form-control" id="activityId" name="activityId" required>
                     </div>
-                    <button type="submit" class="btn btn-primary ms-2">Create Activity</button>
+                    <button type="submit" class="create-new btn btn-primary ms-2">Create Activity</button>
                 </form>
             </div>
         </div>
@@ -58,7 +57,7 @@
     <section class="card-datatable table-responsive p-4 pt-0">
         <table id="myTable" class="table table-bordered datatables-basic">
             <thead>
-                <tr class="p-2">
+                <tr class="align-middle p-2">
                     <th>ID</th>
                     <th>NISN</th>
                     <th>Name</th>
@@ -71,8 +70,13 @@
                 @foreach ($activities as $activity)
                 <tr>
                     <td class="text-center-middle">{{ $activity->id }}</td>
+                    {{-- TO DO: Ini nanti dijadiin link buat liat akun user --}}
                     <td class="text-center-middle">{{ $activity->student_id }}</td>
-                    <td class="text-center-middle">{{ fake()->name() }}</td>
+                    <td class="text-center-middle">
+                        <a href="{{ route('activities.show', $activity) }}" class="link-primary">
+                            {{ fake()->name() }}
+                        </a>
+                    </td>
                     <td class="text-center-middle">{{ $activity->activity_id }}</td>
                     <td class="text-center-middle">{{ $activity->created_at->format('D, d F y H:i:s') }}</td>
                     <td class="text-center align-middle">
@@ -105,15 +109,18 @@
                             </form>
 
                             {{-- VIEW USER DETAILS --}}
-                            <button class="btn btn-info btn-sm btn-icon me-1" title="Lihat">
+                            <a href="{{ route('activities.show', $activity->id) }}"
+                                class="btn btn-info btn-sm btn-icon me-1" title="Lihat">
                                 <i class="bx bx-show"></i>
-                            </button>
+                            </a>
                             {{-- EDIT --}}
                             <button class="btn btn-primary btn-sm btn-icon" type="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvasEndEdit{{ $activity->id }}" aria-controls="offcanvasEndEdit{{ $activity->id }}">
+                                data-bs-target="#offcanvasEndEdit{{ $activity->id }}"
+                                aria-controls="offcanvasEndEdit{{ $activity->id }}">
                                 <i class='bx bx-pencil'></i>
                             </button>
-                            <div class="offcanvas offcanvas-end text-start" tabindex="-1" id="offcanvasEndEdit{{ $activity->id }}"
+                            <div class="offcanvas offcanvas-end text-start" tabindex="-1"
+                                id="offcanvasEndEdit{{ $activity->id }}"
                                 aria-labelledby="offcanvasEndLabel{{ $activity->id }}">
                                 <div class="offcanvas-header">
                                     <h5 id="offcanvasEndLabel" class="offcanvas-title">Edit Activity {{ $activity->id
@@ -133,7 +140,7 @@
                                             <label for="studentId" class="form-label">NISN</label>
                                             <input type="number" class="form-control" id="studentId" name="studentId"
                                                 required value="{{ $activity->student_id }}"
-                                                placeholder="{{ $activity->student_id }}"> 
+                                                placeholder="{{ $activity->student_id }}">
                                         </div>
                                         <div class="mb-3">
                                             <label for="activityId" class="form-label">Activity ID</label>
@@ -153,10 +160,11 @@
     </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // DataTable
     $(function() {
+        'use strict';
+
         $('#myTable').DataTable({
             responsive: true,
             // Default order
@@ -166,7 +174,22 @@
                 { orderable: false, targets: [1, 2, 3, 5] },
                 // Disable searching on specific columns
                 { searchable: false, targets: [0, 3, 4, 5] }
-            ]
+            ],
+            // layout: {
+            //     topStart: {
+            //         buttons: [
+            //             {
+            //                 text: '<i class="bx bx-plus me-1"></i> <span class="d-none d-lg-inline-block">Add New Record</span>',
+            //                 className: 'create-new btn btn-primary',
+            //                 attr: { 
+            //                     'data-bs-toggle': 'offcanvas',
+            //                     'data-bs-target': '#offcanvasEnd',
+            //                     'aria-controls': 'offcanvasEnd'
+            //                 }
+            //             }
+            //         ],
+            //     }
+            // }
         });
     });
 
@@ -174,7 +197,7 @@
     if (session('success'))
             Swal.fire({
                 icon: "success",
-                title: "BERHASIL",
+                title: "Success!",
                 text: "{{ session('success') }}", 
                 showConfirmButton: false,
                 timer: 2000
@@ -182,7 +205,7 @@
         else if (session('error'))
             Swal.fire({
                 icon: "error",
-                title: "GAGAL!",
+                title: "Error!",
                 text: "{{ session('error') }}", 
                 showConfirmButton: false,
                 timer: 2000

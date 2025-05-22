@@ -39,9 +39,17 @@
   <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" />
 
   {{-- DataTable CDN --}}
-  <link rel="stylesheet" href="//cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css">
-  {{-- DataTable --}}
-  <script src="//cdn.datatables.net/2.3.0/js/dataTables.min.js" defer></script>
+  <link
+    href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.3.1/b-3.2.3/b-html5-3.2.3/r-3.0.4/sp-2.3.3/datatables.min.css"
+    rel="stylesheet" integrity="sha384-kyZh6P4QGGHpckHYO3jN5yohRFbKy2EWYtpWfRZte3GelRX7iDrkRPUNKnAlBK8M"
+    crossorigin="anonymous">
+  <script
+    src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.3.1/b-3.2.3/b-html5-3.2.3/r-3.0.4/sp-2.3.3/datatables.min.js"
+    integrity="sha384-fWhtRz7kWKhhOFo/2UUU5RLB+CqqG31Zw3vppPDPyVckh8HT86zd/u+ZblBYcPw+" crossorigin="anonymous">
+  </script>
+
+  {{-- SweetAlert Amelia Syahla --}}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   {{-- Tailwind CSS --}}
 
@@ -119,6 +127,7 @@
   <script src="{{ asset('assets/js/main.js') }}"></script>
 
   <!-- Page JS -->
-   @include('sweetalert::alert')
+  @include('sweetalert::alert')
 </body>
+
 </html>
