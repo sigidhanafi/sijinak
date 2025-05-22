@@ -19,12 +19,13 @@ class StudentsController extends Controller
         $query = Students::with('classes');
 
         if ($request->has('search')) {
-            $search = $request->input('search');
+            $search = strtolower($request->input('search'));
+
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
                     ->orWhere('nisn', 'like', "%{$search}%")
                     ->orWhereHas('classes', function ($q) use ($search) {
-                        $q->where('className', 'like', "%{$search}%");
+                        $q->whereRaw('LOWER(className) LIKE ?', ["%{$search}%"]);
                     });
             });
         }
@@ -35,7 +36,6 @@ class StudentsController extends Controller
         }
 
         $students = $query->orderBy('nisn')->paginate($perPage);
-
         $classes = Classes::orderBy('className')->get();
 
         return view('students.index', compact('students', 'classes'));
@@ -77,7 +77,7 @@ class StudentsController extends Controller
                 'required',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
             'nisn' => [
                 'required',
@@ -151,7 +151,7 @@ class StudentsController extends Controller
                 'required',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
             'email' => [
                 'required',

@@ -19,12 +19,9 @@ class TeachersController extends Controller
         $query = Teachers::with('class');
 
         if ($request->has('search')) {
-            $search = $request->input('search');
+            $search = strtolower($request->input('search'));
 
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('nip', 'like', "%{$search}%");
-            });
+            $query->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
         }
 
         if ($request->filled('filter')) {
@@ -41,7 +38,6 @@ class TeachersController extends Controller
         }
 
         $teachers = $query->orderBy('nip')->paginate($perPage);
-
         $classes = Classes::orderBy('className')->get();
 
         return view('teachers.index', compact('teachers', 'classes'));
@@ -83,7 +79,7 @@ class TeachersController extends Controller
                 'required',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
             'nip' => [
                 'required',
@@ -151,7 +147,7 @@ class TeachersController extends Controller
                 'required',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
             'email' => [
                 'required',

@@ -21,12 +21,13 @@ class ParentsController extends Controller
             $q->orderBy('nisn');
         }]);
 
-        if (request()->filled('search')) {
-            $search = request('search');
+        if ($request->filled('search')) {
+            $search = strtolower($request->input('search'));
+
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
                     ->orWhereHas('students', function ($studentQuery) use ($search) {
-                        $studentQuery->where('name', 'like', "%{$search}%");
+                        $studentQuery->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
                     });
             });
         }
@@ -57,13 +58,13 @@ class ParentsController extends Controller
                 'required',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
             'student_name' => [
                 'required',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
             'email' => [
                 'required',
@@ -98,11 +99,19 @@ class ParentsController extends Controller
                 ->with('error_source', 'create');
         }
 
+        $loweredNames = array_map('mb_strtolower', $studentNames);
+        if (count($loweredNames) !== count(array_unique($loweredNames))) {
+            return redirect()->back()
+                ->withErrors(['student_name' => 'Nama siswa tidak boleh duplikat.'])
+                ->withInput()
+                ->with('error_source', 'create');
+        }
+
         $errors = [];
         $studentsToAssociate = [];
 
         foreach ($studentNames as $name) {
-            $student = Students::where('name', $name)->first();
+            $student = Students::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
 
             if (!$student) {
                 $errors[] = "Siswa '$name' tidak ditemukan.";
@@ -170,13 +179,13 @@ class ParentsController extends Controller
                 'required',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
             'student_name' => [
                 'required',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
             'email' => [
                 'required',
@@ -213,7 +222,8 @@ class ParentsController extends Controller
                 ->with('edited_id', $parent->id);
         }
 
-        if (count($studentNames) !== count(array_unique($studentNames))) {
+        $loweredNames = array_map('mb_strtolower', $studentNames);
+        if (count($loweredNames) !== count(array_unique($loweredNames))) {
             return redirect()->back()
                 ->withErrors(['student_name' => 'Nama siswa tidak boleh duplikat.'])
                 ->withInput()
@@ -225,7 +235,7 @@ class ParentsController extends Controller
         $validStudents = [];
 
         foreach ($studentNames as $name) {
-            $student = Students::where('name', $name)->first();
+            $student = Students::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
 
             if (!$student) {
                 $errors[] = "Siswa '$name' tidak ditemukan.";
@@ -255,17 +265,17 @@ class ParentsController extends Controller
             $parent->user->update(['email' => $validated['email']]);
         }
 
-        $oldStudentNames = $parent->students->pluck('name')->toArray();
+        $oldStudentNamesLower = array_map('mb_strtolower', $parent->students->pluck('name')->toArray());
 
         foreach ($parent->students as $oldStudent) {
-            if (!in_array($oldStudent->name, $studentNames)) {
+            if (!in_array(mb_strtolower($oldStudent->name), $loweredNames)) {
                 $oldStudent->parent()->dissociate();
                 $oldStudent->save();
             }
         }
 
         foreach ($validStudents as $student) {
-            if (!in_array($student->name, $oldStudentNames)) {
+            if (!in_array(mb_strtolower($student->name), $oldStudentNamesLower)) {
                 $student->parent()->associate($parent);
                 $student->save();
             }
@@ -276,7 +286,6 @@ class ParentsController extends Controller
             ->with('edited_id', $parent->id)
             ->with('message', 'Wali siswa berhasil diperbarui.');
     }
-
     /**
      * Remove the specified resource from storage.
      */

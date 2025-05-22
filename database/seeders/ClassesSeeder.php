@@ -15,7 +15,15 @@ class ClassesSeeder extends Seeder
     {
         $classNames = ['X IPA', 'X IPS', 'XI IPA', 'XI IPS', 'XII IPA', 'XII IPS'];
 
-        $teachersForClass = Teachers::inRandomOrder()->take(count($classNames))->get();
+        $teachersForClass = Teachers::where('is_on_duty', false)
+            ->whereDoesntHave('class')
+            ->inRandomOrder()
+            ->take(count($classNames))
+            ->get();
+
+        if ($teachersForClass->count() < count($classNames)) {
+            throw new \Exception('Jumlah guru yang tersedia untuk menjadi wali kelas tidak mencukupi.');
+        }
 
         foreach ($classNames as $index => $className) {
             Classes::create([

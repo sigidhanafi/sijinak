@@ -19,12 +19,12 @@ class ClassesController extends Controller
         $query = Classes::with(['students', 'teacher']);
 
         if ($request->has('search')) {
-            $search = $request->input('search');
+            $search = strtolower($request->input('search'));
 
             $query->where(function ($q) use ($search) {
-                $q->where('className', 'like', "%{$search}%")
+                $q->whereRaw('LOWER(className) LIKE ?', ["%{$search}%"])
                     ->orWhereHas('teacher', function ($q2) use ($search) {
-                        $q2->where('name', 'like', "%{$search}%");
+                        $q2->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
                     });
             });
         }
@@ -58,9 +58,8 @@ class ClassesController extends Controller
                 'nullable',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
-
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
             'className.regex' => 'Nama kelas mengandung karakter yang tidak diperbolehkan.',
@@ -76,11 +75,10 @@ class ClassesController extends Controller
         }
 
         $validated = $validator->validated();
-
         $teacherId = null;
 
         if (!empty($validated['teacherName'])) {
-            $teacher = Teachers::where('name', $validated['teacherName'])->first();
+            $teacher = Teachers::whereRaw('LOWER(name) = ?', [strtolower($validated['teacherName'])])->first();
 
             if (!$teacher) {
                 return redirect()->back()
@@ -123,9 +121,11 @@ class ClassesController extends Controller
         $studentsQuery = $class->students()->orderBy('nisn');
 
         if ($search) {
-            $studentsQuery->where(function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('nisn', 'like', "%{$search}%");
+            $searchLower = strtolower($search);
+
+            $studentsQuery->where(function ($query) use ($searchLower) {
+                $query->whereRaw('LOWER(name) LIKE ?', ["%{$searchLower}%"])
+                    ->orWhere('nisn', 'like', "%{$searchLower}%");
             });
         }
 
@@ -159,7 +159,7 @@ class ClassesController extends Controller
                 'nullable',
                 'string',
                 'max:255',
-                "regex:/^[\pL\s\-\'\.]+$/u",
+                "regex:/^[\pL\s\-\'\.,]+$/u",
             ],
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
@@ -177,11 +177,10 @@ class ClassesController extends Controller
         }
 
         $validated = $validator->validated();
-
         $teacherId = null;
 
         if (!empty($validated['teacherName'])) {
-            $teacher = Teachers::where('name', $validated['teacherName'])->first();
+            $teacher = Teachers::whereRaw('LOWER(name) = ?', [strtolower($validated['teacherName'])])->first();
 
             if (!$teacher) {
                 return redirect()->back()
