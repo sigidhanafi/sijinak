@@ -88,13 +88,13 @@ class TeachersController extends Controller
             'nip' => [
                 'required',
                 'string',
-                'regex:/^[\d\-\/]+$/',
+                'regex:/^\d+$/',
                 'unique:teachers,nip',
             ],
             'is_on_duty' => 'nullable|boolean',
         ], [
             'name.regex' => 'Nama guru mengandung karakter yang tidak diperbolehkan.',
-            'nip.regex' => 'NIP tidak valid.',
+            'nip.regex' => 'NIP hanya boleh berupa angka.',
             'nip.unique' => 'NIP ini sudah terdaftar.',
         ]);
 
@@ -161,7 +161,7 @@ class TeachersController extends Controller
             'nip' => [
                 'required',
                 'string',
-                'regex:/^[\d\-\/]+$/',
+                'regex:/^\d+$/',
                 Rule::unique('teachers', 'nip')->ignore($teacher->id),
             ],
             'is_on_duty' => 'nullable|boolean',
@@ -170,7 +170,7 @@ class TeachersController extends Controller
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
             'email.regex' => 'Format email tidak valid.',
-            'nip.regex' => 'NIP tidak valid.',
+            'nip.regex' => 'NIP hanya boleh berupa angka.',
             'nip.unique' => 'NIP ini sudah terdaftar.',
         ]);
 

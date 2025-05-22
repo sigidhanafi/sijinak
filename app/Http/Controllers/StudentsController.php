@@ -82,13 +82,13 @@ class StudentsController extends Controller
             'nisn' => [
                 'required',
                 'string',
-                'regex:/^[\d\-\/]+$/',
+                'regex:/^\d+$/',
                 'unique:students,nisn',
             ],
             'classId' => 'required|exists:classes,id',
         ], [
             'name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
-            'nisn.regex' => 'NISN tidak valid.',
+            'nisn.regex' => 'NISN hanya boleh berupa angka.',
             'nisn.unique' => 'NISN ini sudah terdaftar.',
         ]);
 
@@ -161,7 +161,7 @@ class StudentsController extends Controller
             'nisn' => [
                 'required',
                 'string',
-                'regex:/^[\d\-\/]+$/',
+                'regex:/^\d+$/',
                 Rule::unique('students', 'nisn')->ignore($student->id),
             ],
             'classId' => 'required|exists:classes,id',
@@ -170,7 +170,7 @@ class StudentsController extends Controller
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
             'email.regex' => 'Format email tidak valid.',
-            'nisn.regex' => 'NISN tidak valid.',
+            'nisn.regex' => 'NISN hanya boleh berupa angka.',
             'nisn.unique' => 'NISN ini sudah terdaftar.',
         ]);
 
