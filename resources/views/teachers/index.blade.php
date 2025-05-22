@@ -280,7 +280,7 @@
                     $("#teacher-table").html(
                         $(data).find("#teacher-table").html()
                     );
-                    bindDeleteButtons(); // pasang ulang event listener delete
+                    bindDeleteButtons();
                 },
                 error: function () {
                     alert("Terjadi kesalahan saat mengambil data.");

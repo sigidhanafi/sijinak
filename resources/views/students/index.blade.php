@@ -191,7 +191,7 @@
                 <div class="modal-body">
                     <p>
                         Yakin ingin menghapus siswa
-                        <strong id="studentName"></strong>?
+                        <strong id="modalStudentName"></strong>?
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -214,7 +214,7 @@
     function bindDeleteButtons() {
         const deleteButtons = document.querySelectorAll(".btn-delete");
         const deleteForm = document.getElementById("deleteForm");
-        const studentNameEl = document.getElementById("studentName");
+        const studentNameEl = document.getElementById("modalStudentName");
         const deleteModalEl = document.getElementById("deleteConfirmModal");
         const deleteModal = new bootstrap.Modal(deleteModalEl);
 
@@ -231,7 +231,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        bindDeleteButtons(); // Pasang event listener saat pertama kali load
+        bindDeleteButtons();
 
         document.querySelectorAll(".offcanvas").forEach((offcanvas) => {
             offcanvas.addEventListener("hidden.bs.offcanvas", () => {
@@ -262,7 +262,7 @@
                 },
                 success: function (data) {
                     $('#student-table').html($(data).find('#student-table').html());
-                    bindDeleteButtons(); // Re-bind setelah data di-reload
+                    bindDeleteButtons();
                 },
                 error: function () {
                     alert('Terjadi kesalahan saat mengambil data.');

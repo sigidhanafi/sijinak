@@ -29,7 +29,7 @@
         <th>Kelas</th>
         <td>
             <span class="fw-medium"
-                >{{ $teacher->class->className ?? '-' }}</span
+                >{{ $teacher->class->className ?? 'Tidak menjadi wali kelas' }}</span
             >
         </td>
     </tr>

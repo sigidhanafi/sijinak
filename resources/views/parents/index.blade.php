@@ -180,7 +180,7 @@
                 <div class="modal-body">
                     <p>
                         Yakin ingin menghapus siswa
-                        <strong id="parentName"></strong>?
+                        <strong id="modalParentName"></strong>?
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -203,7 +203,7 @@
     function bindDeleteButtons() {
         const deleteButtons = document.querySelectorAll(".btn-delete");
         const deleteForm = document.getElementById("deleteForm");
-        const parentNameEl = document.getElementById("parentName");
+        const parentNameEl = document.getElementById("modalParentName");
         const deleteModalEl = document.getElementById("deleteConfirmModal");
         const deleteModal = new bootstrap.Modal(deleteModalEl);
 
@@ -251,7 +251,7 @@
                 },
                 success: function (data) {
                     $('#parent-table').html($(data).find('#parent-table').html());
-                    bindDeleteButtons(); // Re-bind delete buttons
+                    bindDeleteButtons();
                 },
                 error: function () {
                     alert('Terjadi kesalahan saat mengambil data.');

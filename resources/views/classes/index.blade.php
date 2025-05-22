@@ -67,7 +67,9 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="teacherName" class="form-label">Nama Wali Kelas</label>
+                <label for="teacherName" class="form-label"
+                    >Nama Wali Kelas</label
+                >
                 <input
                     type="text"
                     name="teacherName"
@@ -194,7 +196,7 @@
                 },
                 success: function (data) {
                     $('#class-table').html($(data).find('#class-table').html());
-                    bindDeleteButtons(); // Re-bind event listeners after replacing HTML
+                    bindDeleteButtons();
                 },
                 error: function () {
                     alert('Terjadi kesalahan saat mengambil data.');
@@ -204,4 +206,3 @@
     });
 </script>
 @endsection
-

@@ -81,7 +81,7 @@ class ParentsController extends Controller
         $studentsToAssociate = [];
 
         foreach ($studentNames as $name) {
-            $student = Students::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
+            $student = Students::where('name', $name)->first();
 
             if (!$student) {
                 $errors[] = "Siswa '$name' tidak ditemukan.";
@@ -119,7 +119,7 @@ class ParentsController extends Controller
                         ->with('error_source', 'create');
                 }
 
-                if (strtolower($parent->name) !== strtolower($validated['parent_name'])) {
+                if ($parent->name !== $validated['parent_name']) {
                     DB::rollBack();
                     return redirect()->back()
                         ->withErrors(['parent_name' => 'Nama wali tidak sesuai dengan data yang terdaftar.'])
@@ -195,7 +195,7 @@ class ParentsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'parent_name'  => 'required|string|max:255',
-            'student_name' => 'required|string', // bisa berupa "Siswa1, Siswa2, Siswa3"
+            'student_name' => 'required|string',
             'email'        => [
                 'required',
                 'email',
@@ -215,7 +215,6 @@ class ParentsController extends Controller
         }
 
         $validated = $validator->validated();
-
         $studentNames = array_filter(array_map('trim', explode(',', $validated['student_name'])));
 
         if (empty($studentNames)) {
@@ -226,10 +225,7 @@ class ParentsController extends Controller
                 ->with('edited_id', $parent->id);
         }
 
-        $lowercaseNames = array_map('strtolower', $studentNames);
-        $uniqueNames = array_unique($lowercaseNames);
-
-        if (count($lowercaseNames) !== count($uniqueNames)) {
+        if (count($studentNames) !== count(array_unique($studentNames))) {
             return redirect()->back()
                 ->withErrors(['student_name' => 'Nama siswa tidak boleh duplikat.'])
                 ->withInput()
@@ -241,7 +237,7 @@ class ParentsController extends Controller
         $validStudents = [];
 
         foreach ($studentNames as $name) {
-            $student = Students::whereRaw('LOWER(name) = ?', [strtolower($name)])->first();
+            $student = Students::where('name', $name)->first();
 
             if (!$student) {
                 $errors[] = "Siswa '$name' tidak ditemukan.";
@@ -271,20 +267,17 @@ class ParentsController extends Controller
             $parent->user->update(['email' => $validated['email']]);
         }
 
-        $oldStudentNames = $parent->students->pluck('name')->map(fn($n) => strtolower($n))->toArray();
-
-
-        $newStudentNames = array_map('strtolower', $studentNames);
+        $oldStudentNames = $parent->students->pluck('name')->toArray();
 
         foreach ($parent->students as $oldStudent) {
-            if (!in_array(strtolower($oldStudent->name), $newStudentNames)) {
+            if (!in_array($oldStudent->name, $studentNames)) {
                 $oldStudent->parent()->dissociate();
                 $oldStudent->save();
             }
         }
 
         foreach ($validStudents as $student) {
-            if (!in_array(strtolower($student->name), $oldStudentNames)) {
+            if (!in_array($student->name, $oldStudentNames)) {
                 $student->parent()->associate($parent);
                 $student->save();
             }
@@ -295,6 +288,7 @@ class ParentsController extends Controller
             ->with('edited_id', $parent->id)
             ->with('message', 'Wali siswa berhasil diperbarui.');
     }
+
     /**
      * Remove the specified resource from storage.
      */
