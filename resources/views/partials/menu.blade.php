@@ -94,7 +94,7 @@
           </a>
         </li>
         <li class="menu-item">
-          <a href="#" class="menu-link {{ request()->routeIs('scan-qr.*') ? 'active' : '' }}">
+          <a href="{{route('scan-qr.index')}}" class="menu-link {{ request()->routeIs('scan-qr.*') ? 'active' : '' }}">
             <div data-i18n="Scan QR">Scan QR</div>
           </a>
         </li>

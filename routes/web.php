@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivitiesController;
+use App\Http\Controllers\ScanQRController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,7 +13,7 @@ Route::post('/activities/generate', [ActivitiesController::class, 'generate'])->
 Route::get('/activities/{id}/qr-svg', [ActivitiesController::class, 'showQrSvg'])->name('activities.qr-svg');
 Route::get('/activities/{id}/qr-data', [ActivitiesController::class, 'getQrData'])->name('activities.qr-data');
 Route::post('/activities/{id}/refresh-qr', [ActivitiesController::class, 'refreshQrCode']);
-
+Route::resource('/scan-qr', ScanQRController::class);
 
 // Route::get('/dashboard', function() { /* ... */ })->name('dashboard.index');
 // Route::get('/analytics', function() { /* ... */ })->name('analytics.index');
