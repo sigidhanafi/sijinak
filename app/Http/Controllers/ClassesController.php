@@ -64,7 +64,8 @@ class ClassesController extends Controller
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
             'className.regex' => 'Nama kelas mengandung karakter yang tidak diperbolehkan.',
-            'teacherName.regex' => 'Nama wali mengandung karakter yang tidak diperbolehkan.',
+            'teacherName.max' => 'Nama wali kelas tidak boleh lebih dari 255 karakter.',
+            'teacherName.regex' => 'Nama wali kelas mengandung karakter yang tidak diperbolehkan.',
         ]);
 
         if ($validator->fails()) {
@@ -163,7 +164,8 @@ class ClassesController extends Controller
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
             'className.regex' => 'Nama kelas mengandung karakter yang tidak diperbolehkan.',
-            'teacherName.regex' => 'Nama wali mengandung karakter yang tidak diperbolehkan.',
+            'teacherName.max' => 'Nama wali kelas tidak boleh lebih dari 255 karakter.',
+            'teacherName.regex' => 'Nama wali kelas mengandung karakter yang tidak diperbolehkan.',
         ]);
 
         if ($validator->fails()) {

@@ -72,7 +72,9 @@ class ParentsController extends Controller
                 'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
             ],
         ], [
-            'parent_name.regex'  => 'Nama wali mengandung karakter yang tidak diperbolehkan.',
+            'parent_name.max' => 'Nama wali siswa tidak boleh lebih dari 255 karakter.',
+            'parent_name.regex'  => 'Nama wali siswa mengandung karakter yang tidak diperbolehkan.',
+            'student_name.max' => 'Nama siswa tidak boleh lebih dari 255 karakter.',
             'student_name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
             'email.email'        => 'Format email tidak valid.',
             'email.regex'        => 'Format email tidak valid.',
@@ -138,7 +140,7 @@ class ParentsController extends Controller
             $student->save();
         }
 
-        return redirect()->back()->with('success', 'Wali berhasil ditambahkan.');
+        return redirect()->back()->with('success', 'Wali siswa berhasil ditambahkan.');
     }
     /**
      * Display the specified resource.
@@ -183,7 +185,9 @@ class ParentsController extends Controller
                 'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
             ],
         ], [
-            'parent_name.regex'  => 'Nama wali mengandung karakter yang tidak diperbolehkan.',
+            'parent_name.max' => 'Nama wali siswa tidak boleh lebih dari 255 karakter.',
+            'parent_name.regex'  => 'Nama wali siswa mengandung karakter yang tidak diperbolehkan.',
+            'student_name.max' => 'Nama siswa tidak boleh lebih dari 255 karakter.',
             'student_name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
             'email.email'        => 'Format email tidak valid.',
             'email.regex'        => 'Format email tidak valid.',

@@ -93,6 +93,7 @@ class TeachersController extends Controller
             ],
             'is_on_duty' => 'nullable|boolean',
         ], [
+            'name.max' => 'Nama guru tidak boleh lebih dari 255 karakter.',
             'name.regex' => 'Nama guru mengandung karakter yang tidak diperbolehkan.',
             'nip.regex' => 'NIP hanya boleh berupa angka.',
             'nip.unique' => 'NIP ini sudah terdaftar.',
@@ -166,6 +167,7 @@ class TeachersController extends Controller
             ],
             'is_on_duty' => 'nullable|boolean',
         ], [
+            'name.max' => 'Nama guru tidak boleh lebih dari 255 karakter.',
             'name.regex' => 'Nama guru mengandung karakter yang tidak diperbolehkan.',
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',

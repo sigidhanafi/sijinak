@@ -87,6 +87,7 @@ class StudentsController extends Controller
             ],
             'classId' => 'required|exists:classes,id',
         ], [
+            'name.max' => 'Nama siswa tidak boleh lebih dari 255 karakter.',
             'name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
             'nisn.regex' => 'NISN hanya boleh berupa angka.',
             'nisn.unique' => 'NISN ini sudah terdaftar.',
@@ -166,6 +167,7 @@ class StudentsController extends Controller
             ],
             'classId' => 'required|exists:classes,id',
         ], [
+            'name.max' => 'Nama siswa tidak boleh lebih dari 255 karakter.',
             'name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
