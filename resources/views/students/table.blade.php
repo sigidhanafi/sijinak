@@ -23,7 +23,7 @@
                     >
                 </td>
                 <td class="" style="word-wrap: break-word; white-space: normal;">
-                    <div class="d-inline-block text-nowrap">
+                    <div class="d-inline-block">
                         <button
                             class="btn btn-sm btn-icon btn-edit"
                             type="button"

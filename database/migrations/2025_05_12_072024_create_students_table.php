@@ -19,10 +19,10 @@ return new class extends Migration
             );
             $table->string('name');
             $table->string('nisn')->unique();
-            $table->foreignId('classId')->nullable()->constrained(
+            $table->foreignId('classId')->constrained(
                 table: 'classes',
                 indexName: 'classes_classId'
-            )->onDelete('set null');
+            );
             $table->foreignId('parentId')->nullable()->constrained(
                 table: 'parents',
                 indexName: 'parents_parentId'

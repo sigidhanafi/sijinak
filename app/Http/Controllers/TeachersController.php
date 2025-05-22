@@ -59,10 +59,16 @@ class TeachersController extends Controller
     public function store(Request $request)
     {
         $emailValidator = Validator::make($request->only('email'), [
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
+                'unique:users,email',
+            ],
         ], [
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
+            'email.regex' => 'Format email tidak valid.',
         ]);
 
         if ($emailValidator->fails()) {
@@ -73,10 +79,22 @@ class TeachersController extends Controller
         }
 
         $otherValidator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'nip' => 'required|string|unique:teachers,nip',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
+            'nip' => [
+                'required',
+                'string',
+                'regex:/^[\d\-\/]+$/',
+                'unique:teachers,nip',
+            ],
             'is_on_duty' => 'nullable|boolean',
         ], [
+            'name.regex' => 'Nama guru mengandung karakter yang tidak diperbolehkan.',
+            'nip.regex' => 'NIP tidak valid.',
             'nip.unique' => 'NIP ini sudah terdaftar.',
         ]);
 
@@ -128,21 +146,31 @@ class TeachersController extends Controller
     public function update(Request $request, Teachers $teacher)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
             'email' => [
                 'required',
                 'email',
+                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
                 Rule::unique('users', 'email')->ignore($teacher->user_id),
             ],
             'nip' => [
                 'required',
                 'string',
+                'regex:/^[\d\-\/]+$/',
                 Rule::unique('teachers', 'nip')->ignore($teacher->id),
             ],
             'is_on_duty' => 'nullable|boolean',
         ], [
+            'name.regex' => 'Nama guru mengandung karakter yang tidak diperbolehkan.',
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
+            'email.regex' => 'Format email tidak valid.',
+            'nip.regex' => 'NIP tidak valid.',
             'nip.unique' => 'NIP ini sudah terdaftar.',
         ]);
 

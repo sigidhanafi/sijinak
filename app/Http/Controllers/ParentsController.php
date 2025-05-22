@@ -53,11 +53,30 @@ class ParentsController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'parent_name'  => 'required|string|max:255',
-            'student_name' => 'required|string',
-            'email'        => 'required|email',
+            'parent_name'  => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
+            'student_name' => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
+            ],
         ], [
-            'email.email' => 'Format email tidak valid.',
+            'parent_name.regex'  => 'Nama wali mengandung karakter yang tidak diperbolehkan.',
+            'student_name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
+            'email.email'        => 'Format email tidak valid.',
+            'email.regex'        => 'Format email tidak valid.',
+            'email.unique'       => 'Email ini sudah terdaftar.',
         ]);
 
         if ($validator->fails()) {
@@ -103,72 +122,23 @@ class ParentsController extends Controller
                 ->with('error_source', 'create');
         }
 
-        DB::beginTransaction();
+        $user = User::create([
+            'email'    => $validated['email'],
+            'password' => bcrypt('12345678'),
+            'role'     => 'parent',
+        ]);
 
-        try {
-            $user = User::where('email', $validated['email'])->first();
+        $parent = Parents::create([
+            'name'    => $validated['parent_name'],
+            'user_id' => $user->id,
+        ]);
 
-            if ($user) {
-                $parent = Parents::where('user_id', $user->id)->first();
-
-                if (!$parent) {
-                    DB::rollBack();
-                    return redirect()->back()
-                        ->withErrors(['email' => 'Email ini sudah terdaftar.'])
-                        ->withInput()
-                        ->with('error_source', 'create');
-                }
-
-                if ($parent->name !== $validated['parent_name']) {
-                    DB::rollBack();
-                    return redirect()->back()
-                        ->withErrors(['parent_name' => 'Nama wali tidak sesuai dengan data yang terdaftar.'])
-                        ->withInput()
-                        ->with('error_source', 'create');
-                }
-            } else {
-                $validator = Validator::make($request->all(), [
-                    'email' => 'required|email|unique:users,email',
-                ], [
-                    'email.unique' => 'Email ini sudah terdaftar.',
-                ]);
-
-                if ($validator->fails()) {
-                    DB::rollBack();
-                    return redirect()->back()
-                        ->withErrors($validator)
-                        ->withInput()
-                        ->with('error_source', 'create');
-                }
-
-                $user = User::create([
-                    'email'    => $validated['email'],
-                    'password' => bcrypt('12345678'),
-                    'role'     => 'parent',
-                ]);
-
-                $parent = Parents::create([
-                    'name'    => $validated['parent_name'],
-                    'user_id' => $user->id,
-                ]);
-            }
-
-            foreach ($studentsToAssociate as $student) {
-                $student->parent()->associate($parent);
-                $student->save();
-            }
-
-            DB::commit();
-
-            return redirect()->back()->with('success', 'Siswa berhasil ditambahkan ke wali.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return redirect()->back()
-                ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data.'])
-                ->withInput()
-                ->with('error_source', 'create');
+        foreach ($studentsToAssociate as $student) {
+            $student->parent()->associate($parent);
+            $student->save();
         }
+
+        return redirect()->back()->with('success', 'Wali berhasil ditambahkan.');
     }
     /**
      * Display the specified resource.
@@ -194,16 +164,30 @@ class ParentsController extends Controller
     public function update(Request $request, Parents $parent)
     {
         $validator = Validator::make($request->all(), [
-            'parent_name'  => 'required|string|max:255',
-            'student_name' => 'required|string',
-            'email'        => [
+            'parent_name'  => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
+            'student_name' => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
+            'email' => [
                 'required',
                 'email',
                 Rule::unique('users', 'email')->ignore($parent->user_id),
+                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
             ],
         ], [
-            'email.unique' => 'Email ini sudah terdaftar.',
-            'email.email' => 'Format email tidak valid.',
+            'parent_name.regex'  => 'Nama wali mengandung karakter yang tidak diperbolehkan.',
+            'student_name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
+            'email.email'        => 'Format email tidak valid.',
+            'email.regex'        => 'Format email tidak valid.',
+            'email.unique'       => 'Email ini sudah terdaftar.',
         ]);
 
         if ($validator->fails()) {

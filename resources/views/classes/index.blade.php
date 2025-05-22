@@ -184,6 +184,17 @@
         });
         @endif
 
+        @if(session('error_delete'))
+        Swal.fire({
+            icon: 'error',
+            title: `<span style="color:#FF5B5C">Gagal!</span>`,
+            html: `<span style="color:#FF5B5C">{{ session('error_delete') }}</span>`,
+            timer: 2500,
+            showConfirmButton: false,
+            background: 'transparent'
+        });
+        @endif
+
         // AJAX search
         $('#search').on('keyup', function () {
             let query = $(this).val();

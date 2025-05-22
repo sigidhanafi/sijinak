@@ -53,10 +53,16 @@ class StudentsController extends Controller
     public function store(Request $request)
     {
         $emailValidator = Validator::make($request->only('email'), [
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
+                'unique:users,email',
+            ],
         ], [
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
+            'email.regex' => 'Format email tidak valid.',
         ]);
 
         if ($emailValidator->fails()) {
@@ -67,10 +73,22 @@ class StudentsController extends Controller
         }
 
         $otherValidator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'nisn' => 'required|string|unique:students,nisn',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
+            'nisn' => [
+                'required',
+                'string',
+                'regex:/^[\d\-\/]+$/',
+                'unique:students,nisn',
+            ],
             'classId' => 'required|exists:classes,id',
         ], [
+            'name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
+            'nisn.regex' => 'NISN tidak valid.',
             'nisn.unique' => 'NISN ini sudah terdaftar.',
         ]);
 
@@ -128,21 +146,31 @@ class StudentsController extends Controller
     public function update(Request $request, Students $student)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
             'email' => [
                 'required',
                 'email',
+                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
                 Rule::unique('users', 'email')->ignore($student->user_id),
             ],
             'nisn' => [
                 'required',
                 'string',
+                'regex:/^[\d\-\/]+$/',
                 Rule::unique('students', 'nisn')->ignore($student->id),
             ],
             'classId' => 'required|exists:classes,id',
         ], [
+            'name.regex' => 'Nama siswa mengandung karakter yang tidak diperbolehkan.',
             'email.unique' => 'Email ini sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
+            'email.regex' => 'Format email tidak valid.',
+            'nisn.regex' => 'NISN tidak valid.',
             'nisn.unique' => 'NISN ini sudah terdaftar.',
         ]);
 

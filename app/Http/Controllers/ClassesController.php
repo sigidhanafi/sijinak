@@ -47,10 +47,24 @@ class ClassesController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'className' => 'required|string|max:255|unique:classes,className',
-            'teacherName' => 'nullable|string|max:255',
+            'className' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:classes,className',
+                'regex:/^[\pL\s\d\-]+$/u',
+            ],
+            'teacherName' => [
+                'nullable',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-'\.]+$/u",
+            ],
+
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
+            'className.regex' => 'Nama kelas mengandung karakter yang tidak diperbolehkan.',
+            'teacherName.regex' => 'Nama wali mengandung karakter yang tidak diperbolehkan.',
         ]);
 
         if ($validator->fails()) {
@@ -138,10 +152,18 @@ class ClassesController extends Controller
                 'string',
                 'max:255',
                 Rule::unique('classes', 'className')->ignore($class->id),
+                'regex:/^[\pL\s\d\-]+$/u',
             ],
-            'teacherName' => 'nullable|string|max:255',
+            'teacherName' => [
+                'nullable',
+                'string',
+                'max:255',
+                "regex:/^[\pL\s\-\'\.]+$/u",
+            ],
         ], [
             'className.unique' => 'Nama kelas ini sudah terdaftar.',
+            'className.regex' => 'Nama kelas mengandung karakter yang tidak diperbolehkan.',
+            'teacherName.regex' => 'Nama wali mengandung karakter yang tidak diperbolehkan.',
         ]);
 
         if ($validator->fails()) {
@@ -202,7 +224,11 @@ class ClassesController extends Controller
     public function destroy($id)
     {
         $class = Classes::findOrFail($id);
-        $class->students()->update(['classId' => null]);
+
+        if ($class->students()->count() > 0) {
+            return redirect()->back()->with('error_delete', 'Kelas tidak dapat dihapus karena masih digunakan.');
+        }
+
         $class->delete();
 
         return redirect()->back()->with('delete', 'Kelas berhasil dihapus.');
