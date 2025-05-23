@@ -23,9 +23,8 @@
         <!-- Header -->
         <div class="card-header ">
             <div class="col-12 col-md-4 m-2">
-                <h5 class="card-title mb-1">Showing All Logs</h5>
-                <p class=" card-text mb-2">Menampilkan hasil untuk semua log </p>
-                {{-- TODO add interactive ui to show query for .... --}}
+                <h5 id="header-title" class="card-title mb-1">Showing All Logs</h5>
+                <p id="search-query-text" class="card-text mb-2">Menampilkan hasil untuk semua log</p>
             </div>
         </div>
         <!-- .card-header -->
@@ -46,6 +45,22 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            // State management
+            const state = {
+                searchQuery: '',//dynamic text do not confuse with real query
+                updateHeaderState() {
+                    const headerTitle = $('#header-title');
+                    const searchQueryText = $('#search-query-text');
+                    
+                    if (this.searchQuery) {
+                        headerTitle.text('Search Results');
+                        searchQueryText.text(`Menampilkan hasil pencarian untuk: "${this.searchQuery}"`);
+                    } else {
+                        headerTitle.text('Showing All Logs');
+                        searchQueryText.text('Menampilkan hasil untuk semua log');
+                    }
+                }
+            };
 
             $('#search-reset').on('click', resetSearch);
 
@@ -70,6 +85,8 @@
 
             $('#search').on('keyup', function() {
                 query = $(this).val();
+                state.searchQuery = query;
+                state.updateHeaderState();
                 let page = 1;
                 processChange(page, query);
             });
@@ -104,9 +121,10 @@
             }
 
             function resetSearch() {
-                
                 $searchInput.val('');
                 query = '';
+                state.searchQuery = '';
+                state.updateHeaderState();
                 fetchData(1, '');
                 $searchInput.focus();
                 disableButtonAtHome();
@@ -152,6 +170,8 @@
                         const url = new URL(window.location); //ambil url yang ada di browser
                         url.searchParams.set('page', page); //auto search param
                         window.history.pushState({}, '', url);
+                        state.searchQuery = query;
+                        state.updateHeaderState();
                     },
                     error: (xhr, status, error) => {
                         handleError(xhr, status, error)
