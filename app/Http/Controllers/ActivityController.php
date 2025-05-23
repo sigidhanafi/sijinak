@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+ 
 use App\Http\Resources\ActivityCollection;
 use App\Models\Activity;
 use Illuminate\Http\Request;
@@ -28,13 +28,24 @@ class ActivityController extends Controller
      */
     public function index()
 {
-    $activities = Activity::all(); // Ambil data untuk semua user dan admin
-
     if ($this->isAdmin) {
+        $activities = Activity::all();
         return view('activity-log.admin.index', compact('activities'));
     }
 
-    return view('activity-log.user.index', compact('activities')); // <- kirim ke view user juga
+    // For this example, we'll use student_id 1 (Muhammad Ilham)
+    // In a real app, this would come from auth()->user()->student_id
+    $student_id = 3;
+    
+    $activities = Activity::where('student_id', $student_id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+        
+    // Get the student name
+    $student = \App\Models\Student::find($student_id);
+    $studentName = $student ? $student->name : 'Unknown Student';
+
+    return view('activity-log.user.index', compact('activities', 'studentName'));
 }
 
 
