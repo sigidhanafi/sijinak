@@ -40,7 +40,7 @@ class AdminlogsController extends Controller
     });
 }
 
-        $logs = $query->paginate(20);
+        $logs = $query->with('user')->paginate(20);
 
         if ($request->ajax()) {
             return $logs->count() > 0 

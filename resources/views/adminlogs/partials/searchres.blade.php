@@ -32,7 +32,6 @@
     $nextPage = $currentPage + 1;
 @endphp
 
-
 <nav aria-label="Page-navigation" class="mt-2 ">
     <ul class="pagination pagination-lg justify-content-center">
 
