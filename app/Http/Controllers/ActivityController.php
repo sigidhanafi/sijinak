@@ -20,26 +20,23 @@ class ActivityController extends Controller
      *
      * @var bool
      */
-    private $isAdmin = true;
+    private $isAdmin = false;
 
     /**
      * Display a listing of the resource.
      * TO DO: Hafiz (tapi udah keburu kelar)
      */
     public function index()
-    {
-        //
-        if ($this->isAdmin) {
-            $activities = Activity::all();
+{
+    $activities = Activity::all(); // Ambil data untuk semua user dan admin
 
-            return view(
-                'activity-log.admin.index',
-                compact('activities')
-            );
-        }
-
-        return view('activity-log.user.index');
+    if ($this->isAdmin) {
+        return view('activity-log.admin.index', compact('activities'));
     }
+
+    return view('activity-log.user.index', compact('activities')); // <- kirim ke view user juga
+}
+
 
     /**
      * Show the form for creating a new resource.
