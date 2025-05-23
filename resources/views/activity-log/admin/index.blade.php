@@ -55,13 +55,13 @@
     </header>
 
     <section class="card-datatable table-responsive p-4 pt-0">
-        <table id="myTable" class="table table-bordered datatables-basic">
+        <table id="myTable" class="table table-sm table-bordered datatables-basic">
             <thead>
                 <tr class="align-middle p-2">
                     <th>ID</th>
                     <th>NISN</th>
                     <th>Name</th>
-                    <th>Activity ID</th>
+                    <th>Activity</th>
                     <th>Timestamp</th>
                     <th class="text-center">Action</th>
                 </tr>
@@ -70,49 +70,71 @@
                 @foreach ($activities as $activity)
                 <tr>
                     <td class="text-center-middle">{{ $activity->id }}</td>
-                    {{-- TO DO: Ini nanti dijadiin link buat liat akun user --}}
                     <td class="text-center-middle">{{ $activity->student_id }}</td>
+                    {{-- TO DO: Ini nanti dijadiin link buat liat akun user --}}
                     <td class="text-center-middle">
                         <a href="{{ route('activities.show', $activity) }}" class="link-primary">
-                            {{ fake()->name() }}
+                            {{ $activity->student->name }}
                         </a>
                     </td>
-                    <td class="text-center-middle">{{ $activity->activity_id }}</td>
+                    <td class="text-center-middle">
+                        @if ($activity->activity_id == 1)
+                            <span class="badge bg-label-success me-1">Attendance</span> 
+                        @elseif ($activity->activity_id == 2)
+                            <span class="badge bg-label-info me-1">Non-Academic</span> 
+                        @elseif ($activity->activity_id == 3)
+                            <span class="badge bg-label-warning me-1">Organization</span>
+                        @elseif ($activity->activity_id == 4)
+                            <span class="badge bg-label-danger me-1">Other</span>
+                        @else
+                            <span class="badge bg-label-secondary me-1">Unknown</span> {{ $activity->activity_id }}
+                        @endif
+                    </td>
                     <td class="text-center-middle">{{ $activity->created_at->format('D, d F y H:i:s') }}</td>
                     <td class="text-center align-middle">
                         <div class="d-flex justify-content-center align-items-center gap-1">
-                            
+
                             {{-- DELETE --}}
-                            <form action="{{ route('activities.destroy', $activity->id) }}" method="POST" id="delete-form-{{ $activity->id }}">
+                            <form action="{{ route('activities.destroy', $activity->id) }}" method="POST"
+                                id="delete-form-{{ $activity->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" class="btn btn-danger btn-sm btn-icon me-1" data-bs-toggle="modal" data-bs-target="#hapusModal-{{ $activity->id }}" title="Hapus">
+                                <button type="button" class="btn btn-danger btn-sm btn-icon me-1" data-bs-toggle="modal"
+                                    data-bs-target="#hapusModal-{{ $activity->id }}" title="Hapus">
                                     <i class='bx bx-trash'></i>
                                 </button>
-                                <div class="modal fade" id="hapusModal-{{ $activity->id }}" tabindex="-1" aria-labelledby="hapusModalLabel-{{ $activity->id }}" aria-hidden="true">
+                                <div class="modal fade" id="hapusModal-{{ $activity->id }}" tabindex="-1"
+                                    aria-labelledby="hapusModalLabel-{{ $activity->id }}" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="hapusModalLabel-{{ $activity->id }}">Konfirmasi Hapus</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                <h5 class="modal-title" id="hapusModalLabel-{{ $activity->id }}">Confirm
+                                                    Delete</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Tutup"></button>
                                             </div>
-                                            <div class="modal-body">
-                                                <p>Apakah kamu yakin ingin menghapus activity ini? Tindakan ini tidak dapat dibatalkan.</p>
+                                            <div class="modal-body text-start">
+                                                <p>Are you sure you want to delete this activity? This action cannot be
+                                                    undone.</p>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                <button type="button" class="btn btn-primary" onclick="document.getElementById('delete-form-{{ $activity->id }}').submit();">Ya, Hapus</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="document.getElementById('delete-form-{{ $activity->id }}').submit();">Delete</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </form>
+                            {{-- / DELETE --}}
 
-                            {{-- VIEW USER DETAILS --}}
+                            {{-- SHOW --}}
                             <a href="{{ route('activities.show', $activity->id) }}"
                                 class="btn btn-info btn-sm btn-icon me-1" title="Lihat">
                                 <i class="bx bx-show"></i>
                             </a>
+                            {{-- / SHOW --}}
                             {{-- EDIT --}}
                             <button class="btn btn-primary btn-sm btn-icon" type="button" data-bs-toggle="offcanvas"
                                 data-bs-target="#offcanvasEndEdit{{ $activity->id }}"
@@ -152,6 +174,8 @@
                                     </form>
                                 </div>
                             </div>
+                            {{-- / EDIT --}}
+                        </div>
                     </td>
                 </tr>
                 @endforeach
@@ -171,7 +195,7 @@
             order: [[0, 'desc']],
             columnDefs: [
                 // Disable sorting on the first column
-                { orderable: false, targets: [1, 2, 3, 5] },
+                { orderable: false, targets: [1, 3, 5] },
                 // Disable searching on specific columns
                 { searchable: false, targets: [0, 3, 4, 5] }
             ],

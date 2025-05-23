@@ -15,6 +15,6 @@ use App\Http\Controllers\Api\ActivityController;
 |
 */
 
-// Route::apiResources([
-//     'activities' => ActivityController::class,
-// ]);
+Route::apiResources([
+    'activities' => ActivityController::class,
+]);

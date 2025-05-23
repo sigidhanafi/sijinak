@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,8 +19,8 @@ class ActivityFactory extends Factory
     {
         return [
             //
-            'student_id' => fake()->unique()->numberBetween(1, 1000),
-            'activity_id' => fake()->unique()->numberBetween(1, 1000),
+            'student_id' => User::factory(),
+            'activity_id' => fake()->numberBetween(1, 4),
         ];
     }
 }

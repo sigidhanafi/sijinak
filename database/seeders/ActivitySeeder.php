@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Activity;
+use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +21,11 @@ class ActivitySeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Activity::factory()->count(200)->create();
+        // Activity::factory()->count(200)->create();
+
+        User::factory()
+            ->count(20)
+            ->has(Activity::factory()->count(10), 'activities')
+            ->create();
     }
 }
