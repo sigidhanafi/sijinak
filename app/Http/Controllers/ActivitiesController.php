@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Activities;
-use App\Models\Users;
+use App\Models\User;
 use Illuminate\View\View;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +33,7 @@ class ActivitiesController extends Controller
         // use the default teacher for testing purposes.
         $teacherId = Auth::id();
         if (!$teacherId) {
-            $teacher = Users::where('username', 'teacherTest')->first();
+            $teacher = User::where('username', 'teacherTest')->first();
             if (!$teacher) {
                 return response()->json(['error' => 'Default teacher user not found.  Please log in, or create the default teacher.'], 500);
             }
@@ -66,7 +66,9 @@ class ActivitiesController extends Controller
      */
     public function showQrSvg(int $id): Response
     {
-        $cache = \App\Models\ActivityQrCache::where('activity_id', $id)->first();
+        $cache = \App\Models\ActivityQrCache::where('activity_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->first();
 
         if (!$cache) {
             return response('QR code cache not found', 404);

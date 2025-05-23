@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('activityName');
             $table->string('qrCode');
             $table->foreignId('createdBy')->nullable()->constrained(
-                table:'users', 
+                table:'user', 
                 indexName:'activities_createdBy'
             )->nullOnDelete();
             $table->timestamps();

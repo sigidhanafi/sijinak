@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
-            $table->string('className')->nullable();
-            $table->foreignId('teacherId')->nullable()->constrained(
-                table: 'users',
-                indexName: 'users_teacherId'
-            )->nullOnDelete();
+            $table->string('className');
+            // $table->foreignId('teacherId')->nullable()->constrained(
+            //     table: 'teachers',
+            //     indexName: 'teachers_teacherId'
+            // )->onDelete('set null');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

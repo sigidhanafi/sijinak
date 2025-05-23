@@ -14,6 +14,7 @@ Route::get('/activities/{id}/qr-svg', [ActivitiesController::class, 'showQrSvg']
 Route::get('/activities/{id}/qr-data', [ActivitiesController::class, 'getQrData'])->name('activities.qr-data');
 Route::post('/activities/{id}/refresh-qr', [ActivitiesController::class, 'refreshQrCode']);
 Route::resource('/scan-qr', ScanQRController::class);
+Route::post('/scan-qr/submit', [ScanQRController::class, 'scan'])->name('scan.submit');
 
 // Route::get('/dashboard', function() { /* ... */ })->name('dashboard.index');
 // Route::get('/analytics', function() { /* ... */ })->name('analytics.index');

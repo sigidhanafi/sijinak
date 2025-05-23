@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Activities;
-use App\Models\Users;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -32,7 +32,7 @@ class GenerateQR extends Command
         $teacherId = auth()->id();
 
         if (! $teacherId) {
-            $teacher = Users::where('username', 'teacherTest')->first();
+            $teacher = User::where('username', 'teacherTest')->first();
             if (! $teacher) {
                 throw new \Exception('Default teacher user not found');
             }

@@ -13,16 +13,23 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained(
+                table: 'user',
+                indexName: 'user_user_id'
+            );
             $table->string('name');
-            $table->string('nisn');
-            $table->foreignId('classId')->nullable()->constrained(
+            $table->string('nisn')->unique();
+            $table->foreignId('classId')->constrained(
                 table: 'classes',
-                indexName: 'students_classId'
-            )->nullable()->nullOnDelete();
+                indexName: 'classes_classId'
+            );
+            // $table->foreignId('parentId')->nullable()->constrained(
+            //     table: 'parents',
+            //     indexName: 'parents_parentId'
+            // )->onDelete('set null');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

@@ -11,9 +11,9 @@ class Activities extends Model
 {
     protected $fillable = ['activityName', 'qrCode', 'createdBy'];
 
-    public function users(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Users::class, 'id');
+        return $this->belongsTo(User::class, 'id');
     }
 
     public function student_activities(): HasMany

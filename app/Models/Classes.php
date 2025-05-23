@@ -2,23 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Classes extends Model
 {
+    /** @use HasFactory<\Database\Factories\ClassesFactory> */
+    use HasFactory;
 
     protected $fillable = ['className', 'teacherId'];
+
+    // public function teacher(): BelongsTo
+    // {
+    //     return $this->belongsTo(Teachers::class, 'teacherId');
+    // }
 
     public function students(): HasMany
     {
         return $this->hasMany(Students::class, 'classId');
-    }
-
-    public function users():BelongsTo
-    {
-        return $this->belongsTo(Users::class, 'id');
     }
 
     public function totalStudents($classId): int
