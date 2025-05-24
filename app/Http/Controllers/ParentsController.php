@@ -68,9 +68,8 @@ class ParentsController extends Controller
             ],
             'email' => [
                 'required',
-                'email',
+                'email:rfc,dns',
                 'unique:users,email',
-                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
             ],
         ], [
             'parent_name.max' => 'Nama wali siswa tidak boleh lebih dari 255 karakter.',
@@ -189,9 +188,8 @@ class ParentsController extends Controller
             ],
             'email' => [
                 'required',
-                'email',
+                'email:rfc,dns',
                 Rule::unique('users', 'email')->ignore($parent->user_id),
-                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
             ],
         ], [
             'parent_name.max' => 'Nama wali siswa tidak boleh lebih dari 255 karakter.',

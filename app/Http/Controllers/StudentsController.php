@@ -55,8 +55,7 @@ class StudentsController extends Controller
         $emailValidator = Validator::make($request->only('email'), [
             'email' => [
                 'required',
-                'email',
-                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
+                'email:rfc,dns',
                 'unique:users,email',
             ],
         ], [
@@ -155,8 +154,7 @@ class StudentsController extends Controller
             ],
             'email' => [
                 'required',
-                'email',
-                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/',
+                'email:rfc,dns',
                 Rule::unique('users', 'email')->ignore($student->user_id),
             ],
             'nisn' => [
