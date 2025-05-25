@@ -3,6 +3,9 @@
 @section('title', 'Form Izin Siswa')
 
 @section('content')
+{{-- SweetAlert2 CSS --}}
+<link rel="stylesheet" href="{{ asset('assets/vendor/libs/sweetalert2/sweetalert2.css') }}" />
+
 <div class="container mt-4">
   <h2>Formulir Izin Siswa Keluar Sekolah</h2>
 
@@ -10,13 +13,7 @@
     Silakan isi formulir berikut untuk mengajukan izin keluar. Permohonan akan diverifikasi oleh guru piket sebelum disetujui.
 </p>
 
-  {{-- Notifikasi berhasil --}}
-  @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      {{ session('success') }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  @endif
+  {{-- Notifikasi berhasil (akan diganti SweetAlert) --}}
 
   {{-- Notifikasi gagal --}}
   @if(session('error'))
@@ -57,4 +54,22 @@
 
   </form>
 </div>
+
+{{-- SweetAlert2 JS --}}
+<script src="{{ asset('assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(session('success'))
+            Swal.fire({
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                customClass: {
+                    confirmButton: 'btn btn-primary'
+                },
+                buttonsStyling: false
+            });
+        @endif
+    });
+</script>
 @endsection
