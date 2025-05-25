@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivitiesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IzinSiswaController;
+use App\Http\Controllers\QRScanController;
 
 
 Route::get('/', function () {
@@ -21,6 +22,11 @@ Route::get('/validasi-izin', [IzinSiswaController::class, 'index'])->name('activ
 
 Route::post('/guru-piket/izin-siswa/{id}/approve', [IzinSiswaController::class, 'approve'])->name('permission.approve');
 Route::post('/guru-piket/izin-siswa/{id}/reject', [IzinSiswaController::class, 'reject'])->name('permission.reject');
+
+Route::get('/scan-qr', [QRScanController::class, 'index'])->name('activities.scan-qr');
+Route::post('/scan-qr/process', [QRScanController::class, 'process'])->name('activities.scan-qr.process');
+
+
 
 
 

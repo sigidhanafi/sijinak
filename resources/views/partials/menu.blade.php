@@ -99,6 +99,11 @@
             <div data-i18n="Validasi Izin Siswa">Validasi Izin Siswa</div>
           </a>
         </li>
+        <li class="menu-item">
+          <a href="{{ route('activities.scan-qr') }}" class="menu-link">
+            <div data-i18n="Scan QR Code">Scan QR Code</div>
+          </a>
+        </li>
       </ul>
     </li>
     
