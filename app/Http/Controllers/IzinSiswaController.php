@@ -28,12 +28,19 @@ class IzinSiswaController extends Controller
         $izin = IzinSiswa::findOrFail($id);
         $izin->status = 'approved';
 
-        // Prepare QR data
-        $plainData = "{$izin->id}{$izin->waktu_keluar}";
+        // Prepare QR data as JSON
+        $qrData = [
+            'id' => $izin->id,
+            'waktu_keluar' => $izin->waktu_keluar,
+            'timestamp_keluar' => strtotime($izin->waktu_keluar), // Add timestamp for easier comparison
+        ];
+        $plainData = json_encode($qrData);
 
-        // Use Vernam cipher with current minute as key
+        // Use Vernam cipher with current minute and app.key as key
         $minuteKey = date('i'); // current minute, e.g. "07"
-        $encodedData = $this->vernamCipher($plainData, $minuteKey);
+        $appKeyPart = config('app.key');
+        $fullKey = $minuteKey . $appKeyPart;
+        $encodedData = $this->vernamCipher($plainData, $fullKey);
 
         // Generate QR code
         $writer = new PngWriter;
@@ -63,10 +70,21 @@ class IzinSiswaController extends Controller
      * @param string $key
      * @return string
      */
+    /**
+     * Vernam cipher: XOR each byte of data with the corresponding byte of key, then Base64-encode.
+     *
+     * @param string $data
+     * @param string $key
+     * @return string
+     */
     protected function vernamCipher(string $data, string $key): string
     {
         $out = '';
         $keyLen = strlen($key);
+        if ($keyLen === 0) {
+            // Handle empty key case, perhaps throw an exception or return original data
+            return base64_encode($data);
+        }
         for ($i = 0; $i < strlen($data); $i++) {
             $out .= chr(ord($data[$i]) ^ ord($key[$i % $keyLen]));
         }

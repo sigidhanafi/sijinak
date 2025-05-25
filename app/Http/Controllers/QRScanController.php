@@ -31,45 +31,49 @@ class QRScanController extends Controller
         $decryptedData = null;
         $foundIzin = null;
 
-        // Coba dekripsi dengan kunci beberapa menit ke belakang (misalnya, toleransi 5-10 menit)
-        // Kunci juga harus menyertakan app.key seperti saat enkripsi
+        // Coba dekripsi dengan kunci beberapa menit ke belakang (toleransi 5 menit)
+        // Kunci harus sama dengan saat enkripsi: menit saat ini + app.key
         $appKeyPart = config('app.key');
 
         for ($i = 0; $i <= 5; $i++) { // Toleransi 5 menit ke belakang
             $minuteKey = date('i', strtotime("-$i minutes"));
-            $fullKey = $minuteKey . $appKeyPart;
+            $fullKey = $minuteKey . $appKeyPart; // Key must match encryption
             $plainData = $this->vernamDecipher($encoded, $fullKey);
 
-            if (!$plainData) continue; // Jika dekripsi gagal (misal base64 tidak valid)
+            if (!$plainData) {
+                Log::debug("Dekripsi gagal atau data bukan base64 valid untuk menit -$i.");
+                continue; // Jika dekripsi gagal (misal base64 tidak valid)
+            }
 
             $decodedQrData = json_decode($plainData, true);
 
             // Validasi struktur data setelah decode JSON
-            if (isset($decodedQrData['id']) && isset($decodedQrData['timestamp_keluar'])) {
+            if (json_last_error() === JSON_ERROR_NONE && isset($decodedQrData['id']) && isset($decodedQrData['timestamp_keluar'])) {
                 $izin = IzinSiswa::with('user')->find($decodedQrData['id']);
 
                 if ($izin) {
-                    // Validasi tambahan (opsional tapi direkomendasikan):
-                    // Cocokkan timestamp_keluar dari QR dengan yang ada di database
-                    // Ini bisa membantu memastikan QR tidak dimanipulasi jika timestamp juga bagian dari validasi
-                    // if (abs(strtotime($izin->waktu_keluar) - $decodedQrData['timestamp_keluar']) < 3600) { // Toleransi 1 jam misalnya
+                    // Validasi tambahan: Cocokkan timestamp_keluar dari QR dengan yang ada di database
+                    // Beri toleransi waktu untuk memastikan tidak ada masalah sinkronisasi kecil
+                    $dbTimestamp = strtotime($izin->waktu_keluar);
+                    $qrTimestamp = $decodedQrData['timestamp_keluar'];
 
-                    // Cek apakah izin masih relevan (misalnya, belum kedaluwarsa jika ada logika seperti itu)
-                    if ($izin->status === 'approved') { // Hanya proses QR yang statusnya approved
-                        $foundIzin = $izin;
-                        $decryptedData = $decodedQrData; // Simpan data yang berhasil didekripsi
-                        break; // Keluar dari loop jika izin ditemukan dan valid
+                    // Toleransi 5 menit (300 detik) untuk waktu keluar
+                    if (abs($dbTimestamp - $qrTimestamp) <= 300) {
+                        if ($izin->status === 'approved') { // Hanya proses QR yang statusnya approved
+                            $foundIzin = $izin;
+                            $decryptedData = $decodedQrData; // Simpan data yang berhasil didekripsi
+                            break; // Keluar dari loop jika izin ditemukan dan valid
+                        } else {
+                            Log::warning("Percobaan scan QR untuk izin ID: {$izin->id} dengan status: {$izin->status}. Status bukan 'approved'.");
+                        }
                     } else {
-                        Log::warning("Percobaan scan QR untuk izin ID: {$izin->id} dengan status: {$izin->status}");
-                        // Jangan langsung beri error, mungkin ada QR lain yang valid di iterasi berikutnya
+                        Log::warning("Timestamp keluar tidak cocok untuk izin ID: {$izin->id}. QR: {$qrTimestamp}, DB: {$dbTimestamp}. Perbedaan: " . abs($dbTimestamp - $qrTimestamp) . " detik.");
                     }
-                    // } else {
-                    //     Log::warning("Timestamp keluar tidak cocok untuk izin ID: {$izin->id}. QR: {$decodedQrData['timestamp_keluar']}, DB: " . strtotime($izin->waktu_keluar));
-                    // }
+                } else {
+                    Log::warning("Izin dengan ID: {$decodedQrData['id']} tidak ditemukan di database.");
                 }
             } else {
-                // Log jika struktur JSON tidak sesuai harapan setelah dekripsi
-                // Log::debug("Struktur data QR tidak sesuai: " . $plainData);
+                Log::warning("Struktur data QR tidak sesuai harapan atau bukan JSON valid setelah dekripsi: " . $plainData);
             }
         }
 
