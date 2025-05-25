@@ -26,8 +26,8 @@
                 <b>Aksi</b>
             </label>
             <div class="input-group d-flex flex-column">
-                <select class="form-select w-100" id="aksi_filter" aria-label="Filter aksi">
-                    <option selected>Choose...</option>
+                <select class="form-select w-100" id="aksi_filter" name="aksi_filter" aria-label="Filter aksi">
+                    <option value="none" selected>Choose...</option>
                     <option value="1">Log In</option>
                     <option value="2">Create QR</option>
                     <option value="3">Reject Student Request</option>

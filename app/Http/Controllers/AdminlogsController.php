@@ -27,19 +27,46 @@ class AdminlogsController extends Controller
 
     public function search(Request $request)
     {
+        $activityMap = [
+        '1' => 'Log In',
+        '2' => 'Create QR', 
+        '3' => 'Reject Student Request',
+        '4' => 'Accept Student Request',
+        'none' => null,
+        ];
         $search = $request->input('search');
-        $query = Adminlogs::query();
+    $aksiinput = $request->input('aksifilter');
+    $aksifilter = isset($activityMap[$aksiinput]) ? $activityMap[$aksiinput] : null;
 
-        if (!empty($search)) {
-    $query->where(function($q) use ($search) {
-        $q->where('activity_type', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%')
-          ->orWhere('created_at', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%')
-          ->orWhereHas('user', function ($userQuery) use ($search) {
-              $userQuery->where('name', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%');
-          });
-    });
-}
-
+    $query = Adminlogs::query();
+    
+    // Jika ada aksi filter, filter berdasarkan activity_type yang spesifik
+    if (!empty($aksifilter)) {
+        $query->where('activity_type', $aksifilter);
+    }
+    
+    // Jika ada search term, tambahkan filter untuk kolom lain (kecuali activity_type jika aksifilter sudah diterapkan)
+    if (!empty($search)) {
+        $query->where(function($q) use ($search, $aksifilter) {
+            // Jika tidak ada aksifilter, cari juga di activity_type
+            if (empty($aksifilter)) {
+                $q->where('activity_type', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%');
+                $q->orWhere('created_at', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%');
+                $q->orWhereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%');
+                });
+            } else {
+                // Jika ada aksifilter, cari hanya di created_at dan user.name
+                $q->where('created_at', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%');
+                $q->orWhereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'LIKE', '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%');
+                });
+            }
+        });
+    }
+        // if (!empty($aksifilter)) {
+        // $query->where('activity_type', $aksifilter);
+        // }
         $logs = $query->with('user')->paginate(20);
 
         if ($request->ajax()) {

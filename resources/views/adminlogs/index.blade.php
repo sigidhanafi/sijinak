@@ -48,13 +48,21 @@
             // State management
             const state = {
                 searchQuery: '',//dynamic text do not confuse with real query
+                aksifilter: '',
                 updateHeaderState() {
                     const headerTitle = $('#header-title');
                     const searchQueryText = $('#search-query-text');
+                    let text_search='';
+                    if(this.searchQuery) {
+                        text_search += `["${this.searchQuery}"] `;
+                    }
+                    if(this.aksifilter) {
+                        text_search += `[aksi: "${this.aksifilter}"]`;
+                    }
                     
-                    if (this.searchQuery) {
+                    if (this.searchQuery || this.aksifilter) {
                         headerTitle.text('Search Results');
-                        searchQueryText.text(`Menampilkan hasil pencarian untuk: "${this.searchQuery}"`);
+                        searchQueryText.text(`Menampilkan hasil pencarian untuk: ${text_search}`);
                     } else {
                         headerTitle.text('Showing All Logs');
                         searchQueryText.text('Menampilkan hasil untuk semua log');
@@ -64,8 +72,9 @@
 
             $('#search-reset').on('click', resetSearch);
 
-            const processChange = debounce((page, query) => fetchData(page, query));
+            const processChange = debounce((page, query,aksifilter) => fetchData(page, query,aksifilter));
             let query = '';
+            let aksifilter = '';
 
             const $searchInput = $('#search');
 
@@ -88,8 +97,17 @@
                 state.searchQuery = query;
                 state.updateHeaderState();
                 let page = 1;
-                processChange(page, query);
+                processChange(page, query, aksifilter);
             });
+
+            $('#aksi_filter').on('change', function() {
+                aksifilter = $(this).val();
+                let page = 1;
+                state.aksifilter = aksifilter;
+                state.updateHeaderState();
+                processChange(page, query, aksifilter);
+            });
+
 
             $('#error-close').on('click', function() {
                 $('#ajax-error-container').addClass('d-none');
@@ -157,13 +175,15 @@
             // Call on page load
             disableButtonAtHome();
 
-            function fetchData(page, query) {
+            function fetchData(page, query, aksifilter) {
                 $.ajax({
                     url: "{{ route('adminlogs.search') }}",
-                    method: 'GET',
+                    method: 'GET',                      
                     data: {
                         page: page,
-                        search: query
+                        search: query,
+                        aksifilter: aksifilter,
+                        
                     },
                     success: function(data) {
                         $('#searchResults').html(data); //ganti isi saerchresult sama partial
@@ -171,6 +191,7 @@
                         url.searchParams.set('page', page); //auto search param
                         window.history.pushState({}, '', url);
                         state.searchQuery = query;
+                        state.aksifilter = aksifilter;
                         state.updateHeaderState();
                     },
                     error: (xhr, status, error) => {
